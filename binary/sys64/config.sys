@@ -1,0 +1,5 @@
+kernel = kernel.exe
+bootload = libpci.dll
+screenmode =
+bootlog =
+fix_frame_buffer_mtrr = 1

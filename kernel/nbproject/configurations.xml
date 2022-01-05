@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="100">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="SourceFiles"
+                   displayName="Исходные файлы"
+                   projectFiles="true">
+      <itemPath>AbstractDevice.cpp</itemPath>
+      <itemPath>AbstractTimer.cpp</itemPath>
+      <itemPath>AcpiTables.cpp</itemPath>
+      <itemPath>BootVideo.cpp</itemPath>
+      <itemPath>EventObject.cpp</itemPath>
+      <itemPath>ExceptionHandlers.cpp</itemPath>
+      <itemPath>ExternalInterrupts.cpp</itemPath>
+      <itemPath>Heap.cpp</itemPath>
+      <itemPath>Hpet.cpp</itemPath>
+      <itemPath>InterruptQueue.cpp</itemPath>
+      <itemPath>InterruptQueuePool.cpp</itemPath>
+      <itemPath>IoResourceimpl.cpp</itemPath>
+      <itemPath>LocalApic.cpp</itemPath>
+      <itemPath>PeLoader.cpp</itemPath>
+      <itemPath>Process.cpp</itemPath>
+      <itemPath>Semaphore.cpp</itemPath>
+      <itemPath>SmpBoot.cpp</itemPath>
+      <itemPath>SpinLock.cpp</itemPath>
+      <itemPath>TaskManager.cpp</itemPath>
+      <itemPath>ThreadPool.cpp</itemPath>
+      <itemPath>VirtualMemoryManager.cpp</itemPath>
+      <itemPath>bootlib.cpp</itemPath>
+      <itemPath>common_lib.cpp</itemPath>
+      <itemPath>cpu.cpp</itemPath>
+      <itemPath>entry.cpp</itemPath>
+      <itemPath>gdt.cpp</itemPath>
+      <itemPath>idt.cpp</itemPath>
+      <itemPath>kcondition_variable.cpp</itemPath>
+      <itemPath>kmutex.cpp</itemPath>
+      <itemPath>kthread.cpp</itemPath>
+      <itemPath>main.cpp</itemPath>
+      <itemPath>new.cpp</itemPath>
+      <itemPath>paging.cpp</itemPath>
+      <itemPath>panic.cpp</itemPath>
+      <itemPath>phmem.cpp</itemPath>
+      <itemPath>smp.cpp</itemPath>
+      <itemPath>tests.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="HeaderFiles"
+                   displayName="Файлы заголовков"
+                   projectFiles="true">
+      <itemPath>AbstractDevice_p.h</itemPath>
+      <itemPath>AbstractModule.h</itemPath>
+      <itemPath>AbstractTimer.h</itemPath>
+      <itemPath>AcpiTables.h</itemPath>
+      <itemPath>BootVideo.h</itemPath>
+      <itemPath>EventObject.h</itemPath>
+      <itemPath>ExceptionHandlers.h</itemPath>
+      <itemPath>ExternalInterrupts.h</itemPath>
+      <itemPath>Heap.h</itemPath>
+      <itemPath>Hpet.h</itemPath>
+      <itemPath>InterruptQueuePool.h</itemPath>
+      <itemPath>InterruptQueuePrivate.h</itemPath>
+      <itemPath>IoResourceImpl.h</itemPath>
+      <itemPath>LocalApic.h</itemPath>
+      <itemPath>PeLoader.h</itemPath>
+      <itemPath>Process.h</itemPath>
+      <itemPath>Semaphore.h</itemPath>
+      <itemPath>SmpBoot.h</itemPath>
+      <itemPath>SpinLock.h</itemPath>
+      <itemPath>Task.h</itemPath>
+      <itemPath>TaskManager.h</itemPath>
+      <itemPath>ThreadLocalStorage.h</itemPath>
+      <itemPath>ThreadPool_p.h</itemPath>
+      <itemPath>ThreadPrivate.h</itemPath>
+      <itemPath>VirtualMemoryManager_p.h</itemPath>
+      <itemPath>bootlib.h</itemPath>
+      <itemPath>common_lib.h</itemPath>
+      <itemPath>gdt.h</itemPath>
+      <itemPath>idt.h</itemPath>
+      <itemPath>kmutex_p.h</itemPath>
+      <itemPath>paging.h</itemPath>
+      <itemPath>panic.h</itemPath>
+      <itemPath>phmem.h</itemPath>
+      <itemPath>smp.h</itemPath>
+      <itemPath>tests.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Файлы ресурсов"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Файлы тестов"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Важные файлы"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>../include</pElem>
+          </incDir>
+          <commandLine>-std=c++17 -masm=intel -fno-exceptions -fno-rtti -fno-threadsafe-statics -mcx16 -Wno-builtin-declaration-mismatch -mno-red-zone</commandLine>
+          <warningLevel>2</warningLevel>
+        </ccTool>
+        <linkerTool>
+          <commandLine>-m64 -nostdlib -Wl,--pic-executable -e _Z5entryP12KernelParams</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="AbstractDevice.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AbstractDevice_p.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="AbstractModule.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="AbstractTimer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AbstractTimer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="AcpiTables.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AcpiTables.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="BootVideo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="BootVideo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="EventObject.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="EventObject.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ExceptionHandlers.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ExceptionHandlers.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ExternalInterrupts.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ExternalInterrupts.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Heap.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Heap.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hpet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hpet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="InterruptQueue.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="InterruptQueuePool.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="InterruptQueuePool.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="InterruptQueuePrivate.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="IoResourceImpl.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="IoResourceimpl.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="LocalApic.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="LocalApic.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PeLoader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PeLoader.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Process.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Process.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Semaphore.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Semaphore.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SmpBoot.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SmpBoot.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SpinLock.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SpinLock.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Task.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TaskManager.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TaskManager.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ThreadLocalStorage.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ThreadPool.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ThreadPool_p.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ThreadPrivate.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="VirtualMemoryManager.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="VirtualMemoryManager_p.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="bootlib.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="bootlib.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="common_lib.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="common_lib.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cpu.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="entry.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="gdt.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="gdt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="idt.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="idt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="kcondition_variable.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="kmutex.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="kmutex_p.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="kthread.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="new.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="paging.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="paging.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="panic.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="panic.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="phmem.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="phmem.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="smp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="smp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>../include</pElem>
+          </incDir>
+          <commandLine>-std=c++17 -masm=intel -fno-exceptions -fno-rtti -fno-threadsafe-statics -Wno-builtin-declaration-mismatch -mcx16 -mno-red-zone -mno-sse</commandLine>
+          <preprocessorList>
+            <Elem>KERNEL_EXPORT</Elem>
+          </preprocessorList>
+          <warningLevel>2</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <stripSymbols>true</stripSymbols>
+          <commandLine>-m64 -nostdlib -Wl,--pic-executable -Wl,--out-implib,..\lib\libkernel.a -e _Z5entryP12KernelParams</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="AbstractDevice.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AbstractDevice_p.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="AbstractModule.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="AbstractTimer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AbstractTimer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="AcpiTables.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="AcpiTables.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="BootVideo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="BootVideo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="EventObject.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="EventObject.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ExceptionHandlers.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ExceptionHandlers.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ExternalInterrupts.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ExternalInterrupts.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Heap.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Heap.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Hpet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Hpet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="InterruptQueue.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="InterruptQueuePool.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="InterruptQueuePool.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="InterruptQueuePrivate.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="IoResourceImpl.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="IoResourceimpl.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="LocalApic.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="LocalApic.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PeLoader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PeLoader.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Process.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Process.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Semaphore.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Semaphore.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SmpBoot.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SmpBoot.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SpinLock.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SpinLock.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Task.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TaskManager.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TaskManager.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ThreadLocalStorage.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ThreadPool.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ThreadPool_p.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ThreadPrivate.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="VirtualMemoryManager.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="VirtualMemoryManager_p.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="bootlib.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="bootlib.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="common_lib.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="common_lib.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cpu.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="entry.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="gdt.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="gdt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="idt.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="idt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="kcondition_variable.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="kmutex.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="kmutex_p.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="kthread.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="new.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="paging.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="paging.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="panic.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="panic.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="phmem.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="phmem.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="smp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="smp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
