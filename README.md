@@ -2,7 +2,7 @@
 This is operating system kernel project 
 
 ## Why is this needed?
-Nothing. This project is my hobby. In this project I am implementing some of my ideas for basic concepts of OS kernel and working with hardware. 
+This project is my hobby. In this project I am implementing some of my ideas for basic concepts of OS kernel and working with hardware. 
 
 ## Which of interesting things has been implemented now
 - fully 64-bit kernel (x86-64)
