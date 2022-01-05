@@ -31,7 +31,7 @@ This project is my hobby. In this project I'm implementing some of my ideas for 
 - similar actions can be done for virtual machine with support EFI boot
 
 ## Build instruction
-For build all projects need NetBeans IDE requires tuned to build with MinGW-w64 compiler. No special environment, packages or library settings are required.
+For build all projects need NetBeans IDE requires tuned to build with MinGW-w64 compiler. No special environment settings, packages or libraries are required.
 
 ## Plans for future
 - transfer to CMake
