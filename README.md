@@ -13,7 +13,7 @@ Nothing. This project is my hobby. In this project I am implementing some of my 
 - code is written in C++17 with minimum of low-level fragments
 - support kernel modules in PE DLL format
 - implemented standard synchronization primitives: mutex, queued spinlock, condition variable, semaphore, event...
-- implemented analogues of some STL classes and funtions
+- implemented analogues of some STL classes and functions
 
 ## repository guide
 - /binary - lastest kernel binaries
