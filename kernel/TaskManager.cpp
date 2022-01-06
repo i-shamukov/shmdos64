@@ -60,12 +60,12 @@ TASK_SWITCH_HANDLER(externTaskSwitchHandler, EXTERN_BEGIN_ROUTINE);
 
 static TaskManager* g_systemTaskManager = nullptr;
 
-static void updateNextSheduleTime(TimeStamp timepoint)
+static void updateNextSheduleTime(TimePoint timepoint)
 {
 	cpuSetLocalData(LOCAL_CPU_SHED_TIME, timepoint);
 }
 
-static TimeStamp getNextSheduleTime()
+static TimePoint getNextSheduleTime()
 {
 	return cpuGetLocalData(LOCAL_CPU_SHED_TIME);
 }
@@ -193,7 +193,7 @@ Task* TaskManager::shedule(Task* currentTask)
 		}
 	}
 
-	const TimeStamp timepoint = m_timer->fastTimepoint();
+	const TimePoint timepoint = m_timer->fastTimepoint();
 	if (!currentTask->m_idle && (currentTask->m_state == Task::State::Active))
 	{
 		if (getNextSheduleTime() > timepoint)
@@ -204,7 +204,7 @@ Task* TaskManager::shedule(Task* currentTask)
 	{
 	public:
 
-		UpdateTimePointGuard(TimeStamp timepoint)
+		UpdateTimePointGuard(TimePoint timepoint)
 			: m_timepoint(timepoint)
 		{
 
@@ -216,7 +216,7 @@ Task* TaskManager::shedule(Task* currentTask)
 		};
 
 	private:
-		const TimeStamp m_timepoint;
+		const TimePoint m_timepoint;
 	} updateTimePointGuard(timepoint + m_forcedTaskSwitchTimeInterval);
 	{
 		kunique_lock lock(m_timedSleepTaskQueueSpin);
@@ -362,7 +362,7 @@ void TaskManager::needTaskSwitch()
 	cpuSetLocalData(LOCAL_CPU_NEED_TASK_SWITCH, 1);
 }
 
-bool TaskManager::prepareToSleep(Task* task, TimeStamp timeout)
+bool TaskManager::prepareToSleep(Task* task, TimePoint timeout)
 {
 	task->m_spin.lock();
 	if (task->m_state == Task::State::Terminated)
@@ -420,7 +420,7 @@ void TaskManager::smpBalancing()
 		if (!info.m_run.compare_exchange_weak(desired, false, std::memory_order_acquire, std::memory_order_relaxed))
 			return false;
 		
-		const TimeStamp cutTime = m_timer->fastTimepoint();
+		const TimePoint cutTime = m_timer->fastTimepoint();
 		if (info.m_nextIpiTime > cutTime)
 		{
 			info.m_run.store(true, std::memory_order_release);

@@ -58,7 +58,7 @@ bool Semaphore::waitUpdate(State& state, uint32_t count)
 	}
 }
 
-bool Semaphore::wait(uint32_t count, TimeStamp timeout)
+bool Semaphore::wait(uint32_t count, TimePoint timeout)
 {
 	if (count == 0)
 		return true;

@@ -28,12 +28,12 @@ class ConditionVariablePrivate;
 class kcondition_variable
 {
 public:
-    TimeStamp WaitInfinite = kevent::WaitInfinite;
+    static const TimePoint WaitInfinite = kevent::WaitInfinite;
     
 public:
     kcondition_variable();
     ~kcondition_variable();
-    bool wait(kunique_lock<kmutex>& lock, TimeStamp timeout);
+    bool wait(kunique_lock<kmutex>& lock, TimePoint timeout);
     void wait(kunique_lock<kmutex>& lock)
     {
         wait(lock, WaitInfinite);

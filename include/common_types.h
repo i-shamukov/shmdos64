@@ -22,4 +22,4 @@
 
 #include <cstdint>
 
-typedef uint64_t TimeStamp;
+typedef uint64_t TimePoint;

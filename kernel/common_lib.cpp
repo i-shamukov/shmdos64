@@ -31,12 +31,12 @@ int krand()
 	return (unsigned int)(next / 65536) % K_RAND_MAX;
 }
 
-void sleepMs(const TimeStamp& delayMs)
+void sleepMs(const TimePoint& delayMs)
 {
 	EventObject().wait(AbstractTimer::system()->fromMilliseconds(delayMs));
 }
 
-void sleepUs(const TimeStamp& delayUs)
+void sleepUs(const TimePoint& delayUs)
 {
 	AbstractTimer* timer = AbstractTimer::system();
 	if (delayUs >= 1000)
@@ -45,7 +45,7 @@ void sleepUs(const TimeStamp& delayUs)
 	}
 	else
 	{
-		TimeStamp endTime = timer->timepoint() + timer->fromMicroseconds(delayUs);
+		TimePoint endTime = timer->timepoint() + timer->fromMicroseconds(delayUs);
 		while (timer->timepoint() < endTime)
 			cpuPause();
 	}

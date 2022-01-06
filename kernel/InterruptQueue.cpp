@@ -86,7 +86,7 @@ public:
 		return true;
 	}
 	
-	bool pop(InterruptQueue::Item& item, TimeStamp timeout)
+	bool pop(InterruptQueue::Item& item, TimePoint timeout)
 	{
 		for ( ; ; )
 		{
@@ -155,7 +155,7 @@ bool InterruptQueue::push(const Item& item)
 	return m_private->push(item);
 }
 
-bool InterruptQueue::pop(Item& item, TimeStamp timeout)
+bool InterruptQueue::pop(Item& item, TimePoint timeout)
 {
 	return m_private->pop(item, timeout);
 }

@@ -28,42 +28,42 @@ class AbstractTimer
 public:
 	AbstractTimer();
 	virtual ~AbstractTimer();
-	virtual TimeStamp timepoint() const = 0;
+	virtual TimePoint timepoint() const = 0;
 	virtual void setEnableInterrupt(bool enable) = 0;
 	void updateTimePoint();
-	TimeStamp fromSeconds(TimeStamp t) const
+	TimePoint fromSeconds(TimePoint t) const
 	{
 		return t * m_frequency;
 	}
-	TimeStamp fromMilliseconds(TimeStamp t) const
+	TimePoint fromMilliseconds(TimePoint t) const
 	{
 		return t * m_msDivider;
 	}
-	TimeStamp fromMicroseconds(TimeStamp t) const
+	TimePoint fromMicroseconds(TimePoint t) const
 	{
 		return t * m_usDivider;
 	}
-	TimeStamp fromNs100(TimeStamp t) const
+	TimePoint fromNs100(TimePoint t) const
 	{
 		return ((m_ns100Divider > 0) ? (t * m_ns100Divider) : ((t * m_usDivider + 9) / 10));
 	}
-	TimeStamp toSeconds(TimeStamp t) const
+	TimePoint toSeconds(TimePoint t) const
 	{
 		return t / m_frequency;
 	}
-	TimeStamp toMilliseconds(TimeStamp t) const
+	TimePoint toMilliseconds(TimePoint t) const
 	{
 		return t / m_msDivider;
 	}
-	TimeStamp toMicroseconds(TimeStamp t) const
+	TimePoint toMicroseconds(TimePoint t) const
 	{
 		return t / m_usDivider;
 	}
-	TimeStamp toNs100(TimeStamp t) const
+	TimePoint toNs100(TimePoint t) const
 	{
 		return ((m_ns100Divider > 0) ? (t / m_ns100Divider) : (((t + 9) / m_usDivider) * 10));
 	}
-	TimeStamp fastTimepoint() const
+	TimePoint fastTimepoint() const
 	{
 		return m_lastTimepoint.load(std::memory_order_acquire);
 	}
@@ -72,16 +72,16 @@ public:
 	static void onInterrupt();
 
 protected:
-	void setFrequency(TimeStamp frequency);
+	void setFrequency(TimePoint frequency);
 
 private:
 	AbstractTimer(const AbstractTimer&) = delete;
 	AbstractTimer(AbstractTimer&&) = delete;
 
 private:
-	TimeStamp m_frequency = 0;
-	TimeStamp m_msDivider = 0;
-	TimeStamp m_usDivider = 0;
-	TimeStamp m_ns100Divider = 0;
-	std::atomic<TimeStamp> m_lastTimepoint{0};
+	TimePoint m_frequency = 0;
+	TimePoint m_msDivider = 0;
+	TimePoint m_usDivider = 0;
+	TimePoint m_ns100Divider = 0;
+	std::atomic<TimePoint> m_lastTimepoint{0};
 };

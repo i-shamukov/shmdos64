@@ -60,7 +60,7 @@ public:
 
 	static TaskManager* system();
 	static void init();
-	static bool prepareToSleep(Task* task, TimeStamp timeout);
+	static bool prepareToSleep(Task* task, TimePoint timeout);
 	static void onSystemTimerInterrupt();
 	static bool onUseFpu();
 
@@ -71,7 +71,7 @@ private:
 	{
 		Task* m_task = nullptr;
 		std::atomic<bool> m_run{false};
-		TimeStamp m_nextIpiTime = 0;
+		TimePoint m_nextIpiTime = 0;
 	};
 
 private:
@@ -97,7 +97,7 @@ private:
 	TaskPriorityQueue m_timedSleepTaskQueue{new Task*[SystemMaxThreads], SystemMaxThreads};
 	QueuedSpinLockSm m_timedSleepTaskQueueSpin;
 	AbstractTimer* m_timer = AbstractTimer::system();
-	const TimeStamp m_forcedTaskSwitchTimeInterval;
+	const TimePoint m_forcedTaskSwitchTimeInterval;
 	kvector<IdleInfo> m_idleInfo;
 	std::atomic<uint64_t> m_contextSwitchCount;
 

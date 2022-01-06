@@ -63,12 +63,12 @@ struct Task
 	uint32_t m_waitEventResult;
 	uint32_t m_needWaitEvents = 0;
 	State m_state = State::None;
-	TimeStamp m_wakeTime;
+	TimePoint m_wakeTime;
 	QueuedSpinLockSm m_spin;
 	bool m_kernel;
 	bool m_useFpu = false;
 	bool m_idle = false;
-	TimeStamp m_desiredMaxWait = 0;
+	TimePoint m_desiredMaxWait = 0;
 	bool m_readyForSleep = false;
 	PagingManager64* m_pagingManager;
 };

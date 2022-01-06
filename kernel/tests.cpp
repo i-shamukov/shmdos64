@@ -276,13 +276,13 @@ DEF_TEST(threadSimpleTest)
 
 DEF_TEST(threadSleepTest)
 {
-	const TimeStamp desiredDelayMs = 10;
+	const TimePoint desiredDelayMs = 10;
 	AbstractTimer* timer = AbstractTimer::system();
 	for (int i = 0; i < 10; ++i)
 	{
-		const TimeStamp beginTime = timer->fastTimepoint();
+		const TimePoint beginTime = timer->fastTimepoint();
 		sleepMs(desiredDelayMs);
-		const TimeStamp actualDelayMs = timer->toMilliseconds(timer->fastTimepoint() - beginTime);
+		const TimePoint actualDelayMs = timer->toMilliseconds(timer->fastTimepoint() - beginTime);
 		ASSERT(actualDelayMs >= desiredDelayMs);
 	}
 }

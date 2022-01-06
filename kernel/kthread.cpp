@@ -29,7 +29,7 @@
 
 #include <conout.h>
 
-static const TimeStamp g_defaultDesiredTaskMaxWaitTimeMs = 10;
+static const TimePoint g_defaultDesiredTaskMaxWaitTimeMs = 10;
 
 kthread::kthread()
 	: m_private(nullptr)

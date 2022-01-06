@@ -42,7 +42,7 @@ public:
 	{
 		return push(InterruptQueue::Item{obj, arg1, arg2, data});
 	}
-	bool pop(Item& item, TimeStamp timeout = kevent::WaitInfinite);
+	bool pop(Item& item, TimePoint timeout = kevent::WaitInfinite);
 	
 private:
 	InterruptQueue(const InterruptQueue&) = delete;

@@ -27,7 +27,7 @@ class Hpet : public AbstractDevice, public AbstractTimer
 {
 public:
 	~Hpet();
-	TimeStamp timepoint() const override;
+	TimePoint timepoint() const override;
 	static void install();
 	void setEnableInterrupt(bool enable) override;
 

@@ -25,5 +25,5 @@
 static const int K_RAND_MAX = 32767;
 int krand();
 
-void sleepMs(const TimeStamp& delayMs);
-void sleepUs(const TimeStamp& delayUs);
+void sleepMs(const TimePoint& delayMs);
+void sleepUs(const TimePoint& delayUs);

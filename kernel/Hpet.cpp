@@ -102,7 +102,7 @@ Hpet::~Hpet()
 	PANIC(L"not implemented");
 }
 
-TimeStamp Hpet::timepoint() const
+TimePoint Hpet::timepoint() const
 {
 	return m_mmio->in64(MainCounterValueReg);
 }

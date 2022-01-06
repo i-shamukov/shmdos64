@@ -41,7 +41,7 @@ public:
 			PANIC(L"object has waiting threads");
 	}
 
-	bool wait(kunique_lock<kmutex>& lock, TimeStamp timeout)
+	bool wait(kunique_lock<kmutex>& lock, TimePoint timeout)
 	{
 		kmutex* mutex = lock.mutex();
 		threadSetLocalPtr(LOCAL_THREAD_STORAGE_CV_MUTEX, mutex);
@@ -144,7 +144,7 @@ kcondition_variable::~kcondition_variable()
 	delete m_private;
 }
 
-bool kcondition_variable::wait(kunique_lock<kmutex>& lock, TimeStamp timeout)
+bool kcondition_variable::wait(kunique_lock<kmutex>& lock, TimePoint timeout)
 {
 	return m_private->wait(lock, timeout);
 }

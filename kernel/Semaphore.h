@@ -25,9 +25,9 @@
 class Semaphore : private EventObject
 {
 public:
-	static const TimeStamp WaitInfinite = EventObject::WaitInfinite;
+	static const TimePoint WaitInfinite = EventObject::WaitInfinite;
 	Semaphore(uint32_t initialValue, uint32_t max);
-	bool wait(uint32_t count, TimeStamp timeout);
+	bool wait(uint32_t count, TimePoint timeout);
 	void signal(uint32_t count, uint32_t* oldCount);
 
 private:

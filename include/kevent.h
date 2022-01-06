@@ -25,7 +25,7 @@ class EventObject;
 class kevent
 {
 public:
-	static const TimeStamp WaitInfinite = std::numeric_limits<TimeStamp>::max();
+	static const TimePoint WaitInfinite = std::numeric_limits<TimePoint>::max();
 	static const uint32_t WaitError = 0xFFFFFFFF;
 	static const uint32_t WaitTimeout = 0x102;
 
@@ -34,9 +34,9 @@ public:
 	kevent(bool set, bool manualReset);
 	~kevent();
 	void set();
-	uint32_t waitExStatus(TimeStamp timeout);
-	bool wait(TimeStamp timeout = WaitInfinite);
-	static uint32_t waitMultiple(kevent** objects, uint32_t numObjects, bool waitAll, TimeStamp timeout);
+	uint32_t waitExStatus(TimePoint timeout);
+	bool wait(TimePoint timeout = WaitInfinite);
+	static uint32_t waitMultiple(kevent** objects, uint32_t numObjects, bool waitAll, TimePoint timeout);
 
 private:
 	kevent(const kevent&) = delete;

@@ -44,17 +44,17 @@ void kevent::set()
 	return m_private->set();
 }
 
-uint32_t kevent::waitExStatus(TimeStamp timeout)
+uint32_t kevent::waitExStatus(TimePoint timeout)
 {
 	return m_private->waitExStatus(timeout);
 }
 
-bool kevent::wait(TimeStamp timeout)
+bool kevent::wait(TimePoint timeout)
 {
 	return (m_private->waitExStatus(timeout) < WaitTimeout);
 }
 
-uint32_t kevent::waitMultiple(kevent** objects, uint32_t numObjects, bool waitAll, TimeStamp timeout)
+uint32_t kevent::waitMultiple(kevent** objects, uint32_t numObjects, bool waitAll, TimePoint timeout)
 {
 	if ((numObjects == 0) || (numObjects > TaskWaitEventsMax))
 		return WaitError;
@@ -235,7 +235,7 @@ void EventObject::set()
 		m_waitTaskListTail = nullptr;
 }
 
-uint32_t EventObject::waitExStatus(TimeStamp timeout)
+uint32_t EventObject::waitExStatus(TimePoint timeout)
 {
 	Task* task = TaskManager::current();
 	{
@@ -262,12 +262,12 @@ uint32_t EventObject::waitExStatus(TimeStamp timeout)
 	return task->m_waitEventResult;
 }
 
-bool EventObject::wait(TimeStamp timeout)
+bool EventObject::wait(TimePoint timeout)
 {
 	return (waitExStatus(timeout) < WaitTimeout);
 }
 
-uint32_t EventObject::waitMultiple(EventObject** objects, uint32_t numObjects, bool waitAll, TimeStamp timeout)
+uint32_t EventObject::waitMultiple(EventObject** objects, uint32_t numObjects, bool waitAll, TimePoint timeout)
 {	
 	bool needWait[TaskWaitEventsMax];
 	Task* task = TaskManager::current();

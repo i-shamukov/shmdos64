@@ -29,7 +29,7 @@ class AbstractTimer;
 class EventObject
 {
 public:
-	static const TimeStamp WaitInfinite = kevent::WaitInfinite;
+	static const TimePoint WaitInfinite = kevent::WaitInfinite;
 	static const uint32_t WaitError = kevent::WaitError;
 	static const uint32_t WaitTimeout = kevent::WaitTimeout;
 
@@ -37,9 +37,9 @@ public:
 	EventObject(bool set, bool manualReset);
 	virtual ~EventObject();
 	void set();
-	uint32_t waitExStatus(TimeStamp timeout);
-	bool wait(TimeStamp timeout = WaitInfinite);
-	static uint32_t waitMultiple(EventObject** objects, uint32_t numObjects, bool waitAll, TimeStamp timeout);
+	uint32_t waitExStatus(TimePoint timeout);
+	bool wait(TimePoint timeout = WaitInfinite);
+	static uint32_t waitMultiple(EventObject** objects, uint32_t numObjects, bool waitAll, TimePoint timeout);
 
 protected:
 	bool addTaskToWaitList(Task* task);

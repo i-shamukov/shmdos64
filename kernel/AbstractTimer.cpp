@@ -33,7 +33,7 @@ AbstractTimer::~AbstractTimer()
 {
 }
 
-void AbstractTimer::setFrequency(TimeStamp frequency)
+void AbstractTimer::setFrequency(TimePoint frequency)
 {
 	m_frequency = frequency;
 	m_msDivider = frequency / 1000;
