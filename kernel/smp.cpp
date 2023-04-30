@@ -2,7 +2,7 @@
    smp.cpp
    Kernel SMP low-level initialization
    SHM DOS64
-   Copyright (c) 2022, Ilya Shamukov, ilya.shamukov@gmail.com
+   Copyright (c) 2023, Ilya Shamukov, ilya.shamukov@gmail.com
    
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the Free
@@ -52,6 +52,7 @@ static void cpuInitProc(unsigned int cpuId, void* localCpuData, void* localCpuSp
 
 INTERRUPT_HANDLER(cpuStopHandler, "")
 {
+	(void)state;
 	cpuStop();
 }
 

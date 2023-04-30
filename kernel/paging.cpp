@@ -2,7 +2,7 @@
    paging.cpp
    Kernel memory 4-level paging manager
    SHM DOS64
-   Copyright (c) 2022, Ilya Shamukov, ilya.shamukov@gmail.com
+   Copyright (c) 2023, Ilya Shamukov, ilya.shamukov@gmail.com
    
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the Free
@@ -74,6 +74,7 @@ static void localCpuFlushTlb(uintptr_t virtualBase, size_t size)
 
 INTERRUPT_HANDLER(tlbShutdownHandler, "")
 {
+	(void)state;
 	CpuTlbShootdownTask* tlbTask = static_cast<CpuTlbShootdownTask*>(cpuGetLocalPtr(LOCAL_CPU_TLB_TASK));
 	{
 		kunique_lock lock(tlbTask->m_spin);

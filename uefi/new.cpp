@@ -2,7 +2,7 @@
    new.cpp
    C++ new operators for bootloader
    SHM DOS64
-   Copyright (c) 2022, Ilya Shamukov, ilya.shamukov@gmail.com
+   Copyright (c) 2023, Ilya Shamukov, ilya.shamukov@gmail.com
    
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the Free
@@ -40,6 +40,13 @@ void operator delete[](void *p)
 		getSystemTable()->BootServices->FreePool(p);
 }
 
+void operator delete[](void *p, UINTN) 
+{
+	if (p != nullptr)
+		getSystemTable()->BootServices->FreePool(p);
+}
+
+
 void* operator new(UINTN size)
 {
 	void* buffer = nullptr;
@@ -51,6 +58,12 @@ void* operator new(UINTN size)
 }
 
 void operator delete(void *p)
+{
+	if (p != nullptr)
+		getSystemTable()->BootServices->FreePool(p);
+}
+
+void operator delete(void *p, UINTN)
 {
 	if (p != nullptr)
 		getSystemTable()->BootServices->FreePool(p);

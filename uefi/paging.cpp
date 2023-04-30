@@ -2,7 +2,7 @@
    paging.cpp
    Boot paging rootines
    SHM DOS64
-   Copyright (c) 2022, Ilya Shamukov, ilya.shamukov@gmail.com
+   Copyright (c) 2023, Ilya Shamukov, ilya.shamukov@gmail.com
    
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the Free
@@ -114,7 +114,7 @@ uint64_t& PagingManager64::accessToPageTableEntry(uintptr_t virtualBase)
 void PagingManager64::mapPage(uintptr_t virtualBase, uintptr_t physBase, bool readOnly)
 {
 	accessToPageTableEntry(virtualBase) = (physBase & ~PAGE_MASK) |
-		PAGE_FLAG_PRESENT | (readOnly ? 0 : PAGE_FLAG_WRITE) | PAGE_FLAG_GLOBAL;
+		PAGE_FLAG_PRESENT | (readOnly ? 0 : uintptr_t(PAGE_FLAG_WRITE)) | PAGE_FLAG_GLOBAL;
 }
 
 void PagingManager64::protectPages(uintptr_t virtualBase, size_t size)

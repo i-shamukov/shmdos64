@@ -1,0 +1,28 @@
+{
+    "buildType": {
+      "default": "Debug",
+      "description": "Build Type Selection",
+      "choices": {
+        "Debug": {
+          "short": "Debug",
+          "long": "Build with no optimizations and debugging information",
+          "buildType": "Debug",
+          "settings": {
+            "CMAKE_CXX_FLAGS_DEBUG": "-g -Wall -Wextra",
+            "CMAKE_C_FLAGS_DEBUG": "-g -Wall"
+          }
+        },
+        "Release": {
+          "short": "Release",
+          "long": "Build with optimizations and some debuging information",
+          "buildType": "Release",
+          "settings": {
+            "CMAKE_CXX_FLAGS_RELEASE": "-O2 -Wall -Wextra",
+            "CMAKE_C_FLAGS_RELEASE": "-O2 -Wall",
+            "CMAKE_EXE_LINKER_FLAGS_RELEASE": "-s",
+            "CMAKE_SHARED_LINKER_FLAGS_RELEASE": "-s"
+          }
+        }
+      }
+    }
+  }

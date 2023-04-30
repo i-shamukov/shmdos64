@@ -1,0 +1,93 @@
+set(HEADERS
+    AbstractDevice_p.h
+    AbstractTimer.h
+    AcpiTables.h
+    bootlib.h
+    BootVideo.h
+    common_lib.h
+    EventObject.h
+    ExceptionHandlers.h
+    ExternalInterrupts.h
+    gdt.h
+    Heap.h
+    Hpet.h
+    idt.h
+    InterruptQueuePool.h
+    InterruptQueuePrivate.h
+    IoResourceImpl.h
+    kmutex_p.h
+    LocalApic.h
+    paging.h
+    panic.h
+    PeLoader.h
+    phmem.h
+    Process.h
+    Semaphore.h
+    smp.h
+    SmpBoot.h
+    SpinLock.h
+    Task.h
+    TaskManager.h
+    tests.h
+    ThreadLocalStorage.h
+    ThreadPool_p.h
+    ThreadPrivate.h
+    VirtualMemoryManager_p.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/conout.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/cpu.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/AbstractDevice.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/InterruptQueue.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/IoResource.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/kcondition_variable.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/kernel_export.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/kernel_params.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/kevent.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/klock_guard.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/kmutex.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/kthread.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/ThreadPool.h
+)
+
+set(SOURCES
+    AbstractDevice.cpp
+    AbstractTimer.cpp
+    AcpiTables.cpp
+    bootlib.cpp
+    BootVideo.cpp
+    common_lib.cpp
+    cpu.cpp
+    entry.cpp
+    EventObject.cpp
+    ExceptionHandlers.cpp
+    ExternalInterrupts.cpp
+    gdt.cpp
+    Heap.cpp
+    Hpet.cpp
+    idt.cpp
+    InterruptQueue.cpp
+    InterruptQueuePool.cpp
+    IoResourceimpl.cpp
+    kcondition_variable.cpp
+    kmutex.cpp
+    kthread.cpp
+    LocalApic.cpp
+    main.cpp
+    new.cpp
+    paging.cpp
+    panic.cpp
+    PeLoader.cpp
+    phmem.cpp
+    Process.cpp
+    Semaphore.cpp
+    smp.cpp
+    SmpBoot.cpp
+    SpinLock.cpp
+    TaskManager.cpp
+    tests.cpp
+    ThreadPool.cpp
+    VirtualMemoryManager.cpp
+)
+
+add_executable(kernel ${HEADERS} ${SOURCES})
+kernel_main(kernel)
+target_compile_definitions(kernel PRIVATE KERNEL_EXPORT)

@@ -1,7 +1,7 @@
 /*
    kvector.h
    vector implementation header for SHM DOS64
-   Copyright (c) 2022, Ilya Shamukov <ilya.shamukov@gmail.com>
+   Copyright (c) 2023, Ilya Shamukov <ilya.shamukov@gmail.com>
    
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the Free
@@ -135,12 +135,12 @@ public:
 		return m_buf[idx];
 	}
 
-	const iterator begin() const
+	iterator begin() const
 	{
 		return &m_buf[0];
 	}
 
-	const iterator end() const
+	iterator end() const
 	{
 		return &m_buf[m_size];
 	}

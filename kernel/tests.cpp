@@ -2,7 +2,7 @@
    tests.cpp
    Kernel unit tests
    SHM DOS64
-   Copyright (c) 2022, Ilya Shamukov, ilya.shamukov@gmail.com
+   Copyright (c) 2023, Ilya Shamukov, ilya.shamukov@gmail.com
    
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the Free
@@ -104,6 +104,7 @@ DEF_TEST(ramPagesTest)
 DEF_TEST(virtualMemorySimpleTest)
 {
 	void* p = VirtualMemoryManager::system().alloc(PAGE_SIZE, VMM_READWRITE);
+	ASSERT(p != nullptr);
 	kmemset(p, 0xAA, PAGE_SIZE);
 	VirtualMemoryManager::system().free(p);
 }
@@ -496,7 +497,7 @@ DEF_TEST(interruptMessageTest)
 		
 		void onInterruptMessage(int arg1, int, void*)
 		{
-			m_testValue = m_refValue;
+			m_testValue = arg1;
 			m_ev.set();
 		}
 

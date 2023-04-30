@@ -2,7 +2,7 @@
    new.cpp
    Kernel C++ new allocator & page heap debugger
    SHM DOS64
-   Copyright (c) 2022, Ilya Shamukov, ilya.shamukov@gmail.com
+   Copyright (c) 2023, Ilya Shamukov, ilya.shamukov@gmail.com
    
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the Free
@@ -53,6 +53,15 @@ KERNEL_SHARED void* operator new[](size_t size)
 }
 
 KERNEL_SHARED void operator delete[](void* ptr) 
+{
+#ifndef PAGE_HEAP
+	Heap::system().free(ptr);
+#else
+	freePageHeap(ptr);
+#endif
+}
+
+KERNEL_SHARED void operator delete[](void* ptr, size_t) 
 {
 #ifndef PAGE_HEAP
 	Heap::system().free(ptr);

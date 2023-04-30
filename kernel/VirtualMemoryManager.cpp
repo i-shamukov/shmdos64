@@ -2,7 +2,7 @@
    VirtualMemoryManager.cpp
    Kernel virtual memory allocator & paging routines
    SHM DOS64
-   Copyright (c) 2022, Ilya Shamukov, ilya.shamukov@gmail.com
+   Copyright (c) 2023, Ilya Shamukov, ilya.shamukov@gmail.com
    
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the Free
@@ -373,7 +373,7 @@ void* VirtualMemoryManagerPrivate::mapMmio(uintptr_t mmioBase, size_t size, bool
 	if (vBase == 0)
 		return nullptr;
 
-	const uintptr_t pageFlags = PAGE_FLAG_PRESENT | PAGE_FLAG_WRITE | m_pageDefaultFlag | (cacheDisabled ? PAGE_FLAG_CACHE_DISABLE : 0);
+	const uintptr_t pageFlags = PAGE_FLAG_PRESENT | PAGE_FLAG_WRITE | m_pageDefaultFlag | (cacheDisabled ? uintptr_t(PAGE_FLAG_CACHE_DISABLE) : 0);
 	if (alignSize <= PAGE_SIZE)
 		m_paging.mapPage(vBase, mmioBase, pageFlags);
 	else

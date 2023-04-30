@@ -2,7 +2,7 @@
    UefiVideo.cpp
    Boot console
    SHM DOS64
-   Copyright (c) 2022, Ilya Shamukov, ilya.shamukov@gmail.com
+   Copyright (c) 2023, Ilya Shamukov, ilya.shamukov@gmail.com
    
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the Free
@@ -381,6 +381,7 @@ void UefiVideo::putc(char symbol)
 	{
 	case '\n':
 		m_curTextPosY += m_symbolHeight;
+		[[fallthrough]];
 	case '\r':
 		m_curTextPosX = 0;
 		break;
@@ -437,6 +438,7 @@ void UefiVideo::shiftConsole()
 		{
 		case '\n':
 			line++;
+			[[fallthrough]];
 		case '\r':
 			col = 0;
 			break;
@@ -463,7 +465,7 @@ void UefiVideo::shiftConsole()
 			if (old != '\r')
 				drawRectangle(cur_x, cur_y, m_textMaxX - cur_x, m_symbolHeight, g_defaultScreenColor);
 			cur_y += m_symbolHeight;
-
+			[[fallthrough]];
 		case '\r':
 			drawRectangle(cur_x, cur_y, m_textMaxX - cur_x, m_symbolHeight, g_defaultScreenColor);
 			cur_x = 0;
