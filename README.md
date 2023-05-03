@@ -31,7 +31,7 @@ This project is my hobby. In this project I am implementing some of my ideas for
 - similar actions can be done for virtual machine with support EFI boot
 
 ## Build instruction
-For build all projects need NetBeans IDE requires tuned to build with MinGW-w64 compiler. No special environment, package or library settings are required.
+For build all projects need CMake with MinGW-w64 compiler. No special environment, package or library settings are required.
 
 ## Plans for future
 - integration ACPICA and implementation PCI IRQ routing
