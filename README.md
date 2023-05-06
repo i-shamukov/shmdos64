@@ -43,5 +43,4 @@ For build all projects need CMake with MinGW-w64 compiler. No special environmen
 - support build in unix-based OS
 - support alternate loading ELF executable modules mechanism
 - support MSI
-- support multiple IO APIC's
 

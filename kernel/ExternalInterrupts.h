@@ -29,7 +29,7 @@
 class ExternalInterrupts : public AbstractDevice
 {
 public:
-	static const size_t MaxIrq = 32;
+	static const size_t MaxIrq = 64;
 	static const size_t MaxIsaIrq = 16;
 	typedef bool (*Handler)(void* object);
 	typedef void (*RawHandler)();
@@ -50,8 +50,8 @@ private:
 	ExternalInterrupts(const ExternalInterrupts&) = delete;
 	ExternalInterrupts(ExternalInterrupts&&) = delete;
 	void initIoApic();
-	uint32_t readData(uint32_t reg) const;
-	void writeData(uint32_t reg, uint32_t value);
+	static uint32_t readData(IoResource* mmio, uint32_t reg);
+	static void writeData(IoResource* mmio, uint32_t reg, uint32_t value);
 
 private:
 	struct IrqHandlerEntry
@@ -71,9 +71,9 @@ private:
 	};
 
 private:
-	IoResource* m_mmio;
 	struct InterruptData
 	{
+		IoResource* m_mmio = nullptr;
 		uint32_t m_loCache;
 		klist<IrqHandlerEntry> m_irqHandlers;
 		kmutex m_mutex;

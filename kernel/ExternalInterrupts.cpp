@@ -123,6 +123,38 @@ IRQ_HANDLER_DEF(28);
 IRQ_HANDLER_DEF(29);
 IRQ_HANDLER_DEF(30);
 IRQ_HANDLER_DEF(31);
+IRQ_HANDLER_DEF(32);
+IRQ_HANDLER_DEF(33);
+IRQ_HANDLER_DEF(34);
+IRQ_HANDLER_DEF(35);
+IRQ_HANDLER_DEF(36);
+IRQ_HANDLER_DEF(37);
+IRQ_HANDLER_DEF(38);
+IRQ_HANDLER_DEF(39);
+IRQ_HANDLER_DEF(40);
+IRQ_HANDLER_DEF(41);
+IRQ_HANDLER_DEF(42);
+IRQ_HANDLER_DEF(43);
+IRQ_HANDLER_DEF(44);
+IRQ_HANDLER_DEF(45);
+IRQ_HANDLER_DEF(46);
+IRQ_HANDLER_DEF(47);
+IRQ_HANDLER_DEF(48);
+IRQ_HANDLER_DEF(49);
+IRQ_HANDLER_DEF(50);
+IRQ_HANDLER_DEF(51);
+IRQ_HANDLER_DEF(52);
+IRQ_HANDLER_DEF(53);
+IRQ_HANDLER_DEF(54);
+IRQ_HANDLER_DEF(55);
+IRQ_HANDLER_DEF(56);
+IRQ_HANDLER_DEF(57);
+IRQ_HANDLER_DEF(58);
+IRQ_HANDLER_DEF(59);
+IRQ_HANDLER_DEF(60);
+IRQ_HANDLER_DEF(61);
+IRQ_HANDLER_DEF(62);
+IRQ_HANDLER_DEF(63);
 
 static void setupVectors()
 {
@@ -158,6 +190,38 @@ static void setupVectors()
 	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 29, &SystemHandlerIRQ29, true);
 	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 30, &SystemHandlerIRQ30, true);
 	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 31, &SystemHandlerIRQ31, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 32, &SystemHandlerIRQ32, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 33, &SystemHandlerIRQ33, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 34, &SystemHandlerIRQ34, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 35, &SystemHandlerIRQ35, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 36, &SystemHandlerIRQ36, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 37, &SystemHandlerIRQ37, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 38, &SystemHandlerIRQ38, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 39, &SystemHandlerIRQ39, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 40, &SystemHandlerIRQ40, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 41, &SystemHandlerIRQ41, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 42, &SystemHandlerIRQ42, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 43, &SystemHandlerIRQ43, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 44, &SystemHandlerIRQ44, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 45, &SystemHandlerIRQ45, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 46, &SystemHandlerIRQ46, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 47, &SystemHandlerIRQ47, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 48, &SystemHandlerIRQ48, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 49, &SystemHandlerIRQ49, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 50, &SystemHandlerIRQ50, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 51, &SystemHandlerIRQ51, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 52, &SystemHandlerIRQ52, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 53, &SystemHandlerIRQ53, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 54, &SystemHandlerIRQ54, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 55, &SystemHandlerIRQ55, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 56, &SystemHandlerIRQ56, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 57, &SystemHandlerIRQ57, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 58, &SystemHandlerIRQ58, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 59, &SystemHandlerIRQ59, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 60, &SystemHandlerIRQ60, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 61, &SystemHandlerIRQ61, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 62, &SystemHandlerIRQ62, true);
+	SystemIDT::setHandler(CPU_IRQ0_VECTOR + 63, &SystemHandlerIRQ63, true);
 }
 
 static void disablePic()
@@ -187,28 +251,49 @@ void ExternalInterrupts::initIoApic()
 {
 	const kvector<AcpiTables::IoApic>& ioApics = AcpiTables::instance().ioApics();
 	if (ioApics.empty())
-		PANIC(L"IO APIC table isn't present in ACPI");
+		PANIC(L"IO APIC tables isn't present in ACPI");
 
-	const AcpiTables::IoApic& ioApic = ioApics[0];
-	if (ioApic.m_mmioBase == 0)
-		PANIC(L"IO APIC MMIO is null");
+	unsigned int maxIrq = 0;
+	for (size_t apicIdx = 0; apicIdx < ioApics.size(); ++apicIdx)
+	{
+		println(L"Trying to initialize IO APIC [", apicIdx, L']');
+		const AcpiTables::IoApic& ioApic = ioApics[apicIdx];
+		if (ioApic.m_mmioBase == 0)
+			PANIC(L"IO APIC MMIO is null");
 
-	if (ioApic.m_irqBase != 0)
-		PANIC(L"IO APIC irq base isn't null");
+		IoResource* mmio = io(ioApic.m_mmioBase, IoApicMmioSize, IoResourceType::MmioSpace);		
+		const uint32_t verReg = readData(mmio, IoApicVersionInternalReg);
+		println(L"IOAPIC version ", hex(static_cast<uint8_t>(verReg & 0xFF), false));
+		const unsigned int mumIrqs = ((verReg >> 16) & 0xFF) + 1;
+		const unsigned int irqBase = ioApic.m_irqBase;
+		unsigned int irqEnd = irqBase + mumIrqs;
+		if (irqEnd > MaxIrq)
+		{
+			println(L"APIC: too many irq, base=", irqBase, L", num=", mumIrqs);
+			if (irqBase >= MaxIrq)
+				continue;
 
-	m_mmio = io(ioApic.m_mmioBase, IoApicMmioSize, IoResourceType::MmioSpace);
-
-	const uint32_t verReg = readData(IoApicVersionInternalReg);
-	const size_t maxIrq = kmin<size_t>(((verReg >> 16) & 0xFF) + 1, MaxIrq);
+			irqEnd = MaxIrq;
+		}
+		for (unsigned int irq = 0; irq < irqEnd; irq++)
+			m_data[irq].m_mmio = mmio;
+		maxIrq = kmax(maxIrq, irqEnd);
+	}
 	if (maxIrq < 24)
 		PANIC(L"IOAPIC configuration unsupported (too few IRQ)");
 
-	println(L"IOAPIC version ", hex(static_cast<uint8_t>(verReg & 0xFF), false));
 	for (size_t irq = 0; irq < maxIrq; irq++)
 	{
-		m_data[irq].m_loCache = (CPU_IRQ0_VECTOR + irq) | IoApicMaskIrq;
-		if (irq >= MaxIsaIrq)
-			m_data[irq].m_loCache |= IoApicActivLow | IoApicLevelSv;
+		if (m_data[irq].m_mmio != nullptr)
+		{
+			m_data[irq].m_loCache = (CPU_IRQ0_VECTOR + irq) | IoApicMaskIrq;
+			if (irq >= MaxIsaIrq)
+				m_data[irq].m_loCache |= IoApicActivLow | IoApicLevelSv;
+		}
+		else
+		{
+			println(L"Warinig: IRQ ", irq, L" isn't mapped to IO APIC's");
+		}
 	}
 	disablePic();
 	for (const ApicIsaRemappingEntry& entry : AcpiTables::instance().isaRemapping())
@@ -248,7 +333,7 @@ void ExternalInterrupts::lockIrq(unsigned int irq)
 	if (++intData.m_lockCounter == 1)
 	{
 		intData.m_loCache |= IoApicMaskIrq;
-		writeData(irqRegBase(irq), intData.m_loCache);
+		writeData(intData.m_mmio, irqRegBase(irq), intData.m_loCache);
 	}
 }
 
@@ -262,7 +347,7 @@ void ExternalInterrupts::unlockIrq(unsigned int irq)
 	if (--intData.m_lockCounter == 0)
 	{
 		intData.m_loCache &= ~IoApicMaskIrq;
-		writeData(irqRegBase(irq), intData.m_loCache);
+		writeData(intData.m_mmio, irqRegBase(irq), intData.m_loCache);
 	}
 }
 
@@ -273,6 +358,9 @@ unsigned int ExternalInterrupts::installHandler(unsigned int irq, Handler proc, 
 		return 0;
 
 	InterruptData& intData = m_data[m_remapTable[irq]];
+	if (intData.m_mmio == nullptr)
+		return 0;
+
 	klock_guard lock(intData.m_mutex);
 	if (!intData.m_irqHandlers.empty())
 	{
@@ -292,8 +380,11 @@ bool ExternalInterrupts::deleteHandler(unsigned int irq, unsigned int id)
 	if (irq >= MaxIrq)
 		return false;
 
-	bool result = false;
 	InterruptData& intData = m_data[m_remapTable[irq]];
+	if (intData.m_mmio == nullptr)
+		return false;
+
+	bool result = false;
 	klock_guard lock(intData.m_mutex);
 	lockIrq(irq);
 	while (intData.m_irqActiveCounter.load(std::memory_order_relaxed) != 0)
@@ -312,16 +403,16 @@ bool ExternalInterrupts::deleteHandler(unsigned int irq, unsigned int id)
 	return result;
 }
 
-uint32_t ExternalInterrupts::readData(uint32_t reg) const
+uint32_t ExternalInterrupts::readData(IoResource* mmio, uint32_t reg)
 {
-	m_mmio->out32(IoApicAddressReg, reg);
-	return m_mmio->in32(IoApicValueReg);
+	mmio->out32(IoApicAddressReg, reg);
+	return mmio->in32(IoApicValueReg);
 }
 
-void ExternalInterrupts::writeData(uint32_t reg, uint32_t value)
+void ExternalInterrupts::writeData(IoResource* mmio, uint32_t reg, uint32_t value)
 {
-	m_mmio->out32(IoApicAddressReg, reg);
-	m_mmio->out32(IoApicValueReg, value);
+	mmio->out32(IoApicAddressReg, reg);
+	mmio->out32(IoApicValueReg, value);
 }
 
 void ExternalInterrupts::eoi(unsigned int irq)

@@ -105,7 +105,7 @@ enum : unsigned int
 
 enum : unsigned int
 {
-	CPU_IRQ0_VECTOR = 0xC0,
+	CPU_IRQ0_VECTOR = 0xB0,
 	CPU_APIC_SPURIOUS_VECTOR = 0xF0,
 	CPU_LOCAL_TASK_SW_VECTOR = 0xF1,
 	CPU_EXTERN_TASK_SW_VECTOR = 0xF2,
