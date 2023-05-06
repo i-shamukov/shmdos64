@@ -11,5 +11,5 @@ set(SOURCES
 )
 
 add_library(pci SHARED ${HEADERS} ${SOURCES})
-kernel_module(pci)
+kernel_module(pci ON)
 target_link_libraries(pci PRIVATE kernel)
