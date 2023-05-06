@@ -72,7 +72,7 @@ static void localCpuFlushTlb(uintptr_t virtualBase, size_t size)
 	}
 }
 
-INTERRUPT_HANDLER(tlbShutdownHandler, "")
+INTERRUPT_HANDLER(tlbShootdownHandler, "")
 {
 	(void)state;
 	CpuTlbShootdownTask* tlbTask = static_cast<CpuTlbShootdownTask*>(cpuGetLocalPtr(LOCAL_CPU_TLB_TASK));
@@ -399,7 +399,7 @@ void PagingManager64::initSmp()
 	
 	g_pagingManagers[BOOT_CPU_ID].store(&PagingManager64::system(), std::memory_order_relaxed);
 	cpuSetLocalPtr(LOCAL_CPU_TLB_TASK, g_cpuTlbShootdownTask[BOOT_CPU_ID]);
-	SystemIDT::setHandler(CPU_TLB_SHOOTDOWN_VECTOR, &tlbShutdownHandler, true);
+	SystemIDT::setHandler(CPU_TLB_SHOOTDOWN_VECTOR, &tlbShootdownHandler, true);
 }
 
 void PagingManager64::initCpu(unsigned int cpuId)

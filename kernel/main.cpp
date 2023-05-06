@@ -38,6 +38,7 @@
 #include "InterruptQueuePool.h"
 #include "PeLoader.h"
 #include "panic.h"
+#include "KernelPower.h"
 
 void KernelMain()
 {
@@ -55,6 +56,7 @@ void KernelMain()
 	TaskManager::init();
 	SystemSMP::init();
 	InterruptQueuePool::system();
+	KernelPower::init();
 	PeLoader::loadKernelModules();
 
 	runTests();

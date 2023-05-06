@@ -140,7 +140,7 @@ struct HpetTable
 
 AcpiTables::AcpiTables()
 {
-	const Rsdp* rsdp = static_cast<const Rsdp*>(getKernelParams()->m_acpiRsdp);
+	const Rsdp* rsdp = physToVirtualInt<Rsdp>(getKernelParams()->m_acpiRsdpPhys);
 	println(L"Found ACPI-compatible system");
 	println(L"ACPI version: ", static_cast<int>(rsdp->m_revision + 1));
 	println(L"RSDT address: ", hex(rsdp->m_xsdtAddress, false));
@@ -288,3 +288,5 @@ KERNEL_SHARED const kvector<SystemEnhancedPciSegment>& getSystemEnhancedPciSegme
 {
 	return AcpiTables::instance().pciEnhancedSegments();
 }
+
+

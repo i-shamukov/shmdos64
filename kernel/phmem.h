@@ -51,6 +51,11 @@ public:
 		return m_avaibleRamSize;
 	}
 
+	uintptr_t getMaxRamAddr() const 
+	{
+		return m_maxRamAddr;
+	}
+
 private:
 	RamAllocator();
 	RamAllocator(const RamAllocator&) = delete;
@@ -65,6 +70,7 @@ private:
 	volatile m_header{ m_pEndList, 0};
 	static_assert((sizeof (m_header) == 2 * sizeof (uintptr_t)), "size of RegionListHeader is incorrect");
 	size_t m_avaibleRamSize = 0;
+	uintptr_t m_maxRamAddr = 0;
 
 private:
 	static void** m_pEndList;

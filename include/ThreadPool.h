@@ -20,9 +20,10 @@
 
 #pragma once
 #include <functional>
+#include <kernel_export.h>
 
 class ThreadPoolPrivate;
-class ThreadPool
+class KERNEL_SHARED ThreadPool
 {
 public:
     ThreadPool(size_t numThreads);

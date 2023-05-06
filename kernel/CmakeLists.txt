@@ -4,7 +4,6 @@ set(HEADERS
     AcpiTables.h
     bootlib.h
     BootVideo.h
-    common_lib.h
     EventObject.h
     ExceptionHandlers.h
     ExternalInterrupts.h
@@ -33,6 +32,7 @@ set(HEADERS
     ThreadPool_p.h
     ThreadPrivate.h
     VirtualMemoryManager_p.h
+    KernelPower.h
     ${KERNEL_MODULE_INCLUDE_ROOT}/conout.h
     ${KERNEL_MODULE_INCLUDE_ROOT}/cpu.h
     ${KERNEL_MODULE_INCLUDE_ROOT}/AbstractDevice.h
@@ -46,6 +46,12 @@ set(HEADERS
     ${KERNEL_MODULE_INCLUDE_ROOT}/kmutex.h
     ${KERNEL_MODULE_INCLUDE_ROOT}/kthread.h
     ${KERNEL_MODULE_INCLUDE_ROOT}/ThreadPool.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/kchrono.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/ksem.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/kspin_lock.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/common_lib.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/power.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/KernelModule.h
 )
 
 set(SOURCES
@@ -86,6 +92,10 @@ set(SOURCES
     tests.cpp
     ThreadPool.cpp
     VirtualMemoryManager.cpp
+    CLibImpl.cpp
+    kchrono.cpp
+    power.cpp
+    KernelModule.cpp
 )
 
 add_executable(kernel ${HEADERS} ${SOURCES})

@@ -78,7 +78,7 @@ private:
 		klist<IrqHandlerEntry> m_irqHandlers;
 		kmutex m_mutex;
 		unsigned int m_eoiCounter = 0;
-		std::atomic<unsigned int> m_lockCounter{1};
+		std::atomic<unsigned int> m_lockCounter{0};
 		std::atomic<unsigned int> m_irqActiveCounter{0};
 	} m_data[MaxIrq];
 	unsigned int m_remapTable[MaxIrq];

@@ -22,6 +22,53 @@
 #include <common_types.h>
 #include <kvector.h>
 
+enum PciConfigurationSpaceHeader
+{
+   PciConfSpaceVendorId = 0x00,
+   PciConfSpaceDeviceId = 0x02,
+   PciConfSpaceVendorAndDeviceId = 0x00,
+   PciConfSpaceCommand = 0x04,
+   PciConfSpaceStatus = 0x06,
+   PciConfSpaceCommandAndStatus = 0x04,
+   PciConfSpaceFullClassId = 0x08,
+   PciConfSpaceRevisionId = 0x08,
+   PciConfSpaceProgInterface = 0x09,
+   PciConfSubclass = 0x0A,
+   PciConfClass = 0x0B,
+   PciConfSpaceSubclassClass = 0x0A,
+   PciConfCacheLineSize = 0x0C,
+   PciConfLatencyTimer = 0x0D,
+   PciConfHeaderType = 0x0E,
+   PciConfBist = 0x0F
+};
+
+enum PciConfigurationHeaderType
+{
+   PciHeaderTypeDevice = 0x00,
+   PciHeaderTypePciToPciBridge = 0x01
+};
+
+enum PciConfigurationSpacePciToPciBridge
+{
+   PciConfSecondaryBusNumber = 0x19
+};
+
+enum PciConfigurationSpaceDevice
+{
+   PciConfIrqPin = 0x3C,
+   PciConfIrq = 0x3C
+};
+
+enum PciClassCodes
+{
+   PciClassCodeBridge = 0x06
+};
+
+enum PciSubclassCodesBridge
+{
+   PciSubclassCodePciToPciBridge = 0x04
+};
+
 struct SystemEnhancedPciSegment
 {
 	uintptr_t m_mmioBase;

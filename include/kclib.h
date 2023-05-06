@@ -21,6 +21,7 @@
 #pragma once
 
 #include <common_types.h>
+#include <kernel_export.h>
 
 extern char* kitoa(int value, char *str, int base);
 extern char* kuitoa(unsigned value, char *str, int base);
@@ -136,6 +137,15 @@ static T ktoupper(T character)
 }
 
 template< typename T >
+static T ktolower(T character)
+{
+    if (character >= 'A' && character <= 'Z')
+        return character + 0x20;
+    else
+        return character;
+}
+
+template< typename T >
 static inline int kstricmp(const T* str1, const T* str2)
 {
     while (ktoupper(*str1) == ktoupper(*str2))
@@ -197,3 +207,5 @@ static inline uintptr_t getObjectOffset(T C::*field)
     C tmp;
     return reinterpret_cast<char *> (&(tmp .* field)) - reinterpret_cast<char *> (&tmp);
 }
+
+int KERNEL_SHARED kvprintf(const char* format, va_list arg);

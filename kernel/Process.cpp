@@ -87,3 +87,10 @@ Process& Process::kernel()
 	static Process process;
 	return process;
 }
+
+void Process::notityModules(const KernelModuleMessage& msg)
+{
+	klock_guard lock(m_modulesMutex);
+	for (AbstractModule* module : m_modules)
+		module->onSystemMessage(msg.m_msg, msg.m_arg, msg.m_ptr);
+}

@@ -20,23 +20,25 @@
 */
 
 #include <cpu.h>
+#include <kernel_export.h>
+#include <kernel_params.h>
 #include "EventObject.h"
 #include "common_lib.h"
 #include "AbstractTimer.h"
 
-int krand()
+KERNEL_SHARED int krand()
 {
 	static unsigned int next = static_cast<unsigned int>(cpuReadTSC());
 	next = next * 1103515245 + 12345;
 	return (unsigned int)(next / 65536) % K_RAND_MAX;
 }
 
-void sleepMs(const TimePoint& delayMs)
+KERNEL_SHARED void sleepMs(TimePoint delayMs)
 {
 	EventObject().wait(AbstractTimer::system()->fromMilliseconds(delayMs));
 }
 
-void sleepUs(const TimePoint& delayUs)
+KERNEL_SHARED void sleepUs(TimePoint delayUs)
 {
 	AbstractTimer* timer = AbstractTimer::system();
 	if (delayUs >= 1000)
@@ -49,4 +51,9 @@ void sleepUs(const TimePoint& delayUs)
 		while (timer->timepoint() < endTime)
 			cpuPause();
 	}
+}
+
+KERNEL_SHARED uintptr_t acpiRsdpPhys()
+{
+	return getKernelParams()->m_acpiRsdpPhys;
 }

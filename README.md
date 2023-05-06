@@ -34,7 +34,6 @@ This project is my hobby. In this project I am implementing some of my ideas for
 For build all projects need CMake with MinGW-w64 compiler. No special environment, package or library settings are required.
 
 ## Plans for future
-- integration ACPICA and implementation PCI IRQ routing
 - PCI Device enumerator
 - kernel asynchronous IO manager (async read-write files, etc)
 - support some parts of USB, for example, xHCI
@@ -43,4 +42,6 @@ For build all projects need CMake with MinGW-w64 compiler. No special environmen
 - implementation of simple user-mode GUI and command shell
 - support build in unix-based OS
 - support alternate loading ELF executable modules mechanism
+- support MSI
+- support multiple IO APIC's
 

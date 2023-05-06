@@ -23,6 +23,27 @@
 #include "ThreadLocalStorage.h"
 #include "Semaphore.h"
 
+ksem::ksem(uint32_t initialValue, uint32_t max)
+	: m_private(new Semaphore(initialValue, max))
+{
+
+}
+
+ksem::~ksem()
+{
+	delete m_private;
+}
+
+bool ksem::wait(uint32_t count, TimePoint timeout)
+{
+	return m_private->wait(count, timeout);
+}
+
+void ksem::signal(uint32_t count, uint32_t* oldCount)
+{
+	return m_private->signal(count, oldCount);
+}
+
 Semaphore::Semaphore(uint32_t initialValue, uint32_t max)
 	: m_state(State{initialValue, 0})
 	, m_max(max)

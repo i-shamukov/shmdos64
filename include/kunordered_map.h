@@ -65,6 +65,15 @@ struct khash<kstring>
 	}
 };
 
+template<>
+struct khash<void*>
+{
+	size_t operator()(void* ptr) const
+	{
+		return reinterpret_cast<size_t>(ptr);
+	}
+};
+
 template<typename Key, typename T>
 class kunordered_map
 {

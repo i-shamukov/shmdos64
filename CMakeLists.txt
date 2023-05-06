@@ -7,6 +7,7 @@ set(KERNEL_MODULE_INCLUDE_ROOT ${SHM_ROOT}/include)
 set(KERNEL_MODULE_LIB_ROOT ${SHM_ROOT}/lib/$<CONFIG>)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SHM_ROOT}/bin/$<CONFIG>)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${KERNEL_MODULE_LIB_ROOT})
+set(EXTLIBS ${SHM_ROOT}/3rdparty)
 
 set(CMAKE_VERBOSE_MAKEFILE on)
 
@@ -28,6 +29,7 @@ function(kernel_module module_name)
     target_link_directories(${module_name} PRIVATE ${KERNEL_MODULE_LIB_ROOT})
     target_link_libraries(${module_name} PRIVATE moduleinit)
     set_target_properties(${module_name} PROPERTIES IMPORT_SUFFIX ".a")
+    set_target_properties(${module_name} PROPERTIES PREFIX "")
 endfunction()
 
 function(kernel_static_lib lib_name)
@@ -51,4 +53,5 @@ add_subdirectory(uefi)
 add_subdirectory(kernel)
 add_subdirectory(moduleinit)
 add_subdirectory(pci)
+add_subdirectory(acpi)
 

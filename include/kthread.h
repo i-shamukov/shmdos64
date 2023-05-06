@@ -20,6 +20,7 @@
 
 #pragma once
 #include <functional>
+#include <common_types.h>
 
 enum
 {
@@ -27,10 +28,15 @@ enum
 	DEFAULT_USER_THREAD_STASK_SIZE = 0x100000
 };
 
+
+
 class Process;
 class ThreadPrivate;
 class kthread
 {
+public:
+   typedef uintptr_t id;
+
 public:
 	kthread();
 	kthread(kthread&& oth);
@@ -50,3 +56,8 @@ private:
 
 	friend class TaskManager;
 };
+
+namespace kthis_thread
+{
+   kthread::id get_id();
+}

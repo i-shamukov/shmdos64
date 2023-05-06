@@ -20,6 +20,7 @@
 
 #pragma once
 #include <common_types.h>
+#include <kernel_export.h>
 
 enum : uintptr_t
 {
@@ -34,7 +35,7 @@ enum : uintptr_t
 
 class PagingManager64;
 class VirtualMemoryManagerPrivate;
-class VirtualMemoryManager
+class KERNEL_SHARED VirtualMemoryManager
 {
 public:
 	void* alloc(size_t size, uintptr_t flags);

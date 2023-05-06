@@ -20,6 +20,7 @@
 */
 
 #include <cpu.h>
+#include <kspin_lock.h>
 #include "TaskManager.h"
 #include "SpinLock.h"
 #include "smp.h"
@@ -172,6 +173,31 @@ void QueuedSpinLockIntLock::unlock()
 	if (m_needInterrpuptLock)
 		cpuEnableInterrupts();
 	m_lock.unlock();
+}
+
+kspin_lock::kspin_lock()
+{
+	m_private = new QueuedSpinLockBase<true>();
+}
+
+kspin_lock::~kspin_lock()
+{
+	delete m_private;
+}
+
+void kspin_lock::lock()
+{
+	m_private->lock();
+}
+
+void kspin_lock::unlock()
+{
+	m_private->unlock();
+}
+
+bool kspin_lock::try_lock()
+{
+	return m_private->try_lock();
 }
 
 TEMPLATE_FUNC_EXTERN(void, lock)

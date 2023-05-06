@@ -84,6 +84,14 @@ void kthread::join()
 	m_private->m_terminateEvent.wait(EventObject::WaitInfinite);
 }
 
+namespace kthis_thread
+{
+	KERNEL_SHARED kthread::id get_id()
+	{
+		return reinterpret_cast<kthread::id>(TaskManager::current());
+	}
+}
+
 void ThreadPrivate::init(size_t kernelStackSize)
 {
 	static const void* defaultFpuData = [] {

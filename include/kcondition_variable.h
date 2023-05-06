@@ -25,7 +25,7 @@
 #include <kevent.h>
 
 class ConditionVariablePrivate;
-class kcondition_variable
+class KERNEL_SHARED kcondition_variable
 {
 public:
     static const TimePoint WaitInfinite = kevent::WaitInfinite;

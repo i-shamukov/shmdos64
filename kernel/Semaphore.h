@@ -20,7 +20,9 @@
 */
 
 #pragma once
+#include <ksem.h>
 #include "EventObject.h"
+
 
 class Semaphore : private EventObject
 {

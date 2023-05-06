@@ -23,7 +23,7 @@
 #include <atomic>
 #include <klock_guard.h>
 
-#define DEADLOCK_DEBUG
+//#define DEADLOCK_DEBUG
 
 struct alignas(16) QueuedSpinLockEntry
 {

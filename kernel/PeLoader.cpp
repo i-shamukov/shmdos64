@@ -25,25 +25,11 @@
 #include <klocale.h>
 #include <cpu.h>
 #include <conout.h>
+#include <KernelModule.h>
 #include "panic.h"
 #include "PeLoader.h"
 
 static const size_t IntMaxModuleSize = 0x2000000;
-typedef int (*KernelModuleEntry)(void*, unsigned int, void*);
-
-enum : unsigned int
-{
-	KernelModuleUnload = 0,
-	KernelModuleLoad = 1,
-	KernelModuleSystemMsg = 1000
-};
-
-struct KernelModuleMessage
-{
-	int m_msg; 
-	int m_arg; 
-	void* m_ptr;
-};
 
 static const wchar_t* g_errorStrings[] = 
 {

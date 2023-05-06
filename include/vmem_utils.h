@@ -22,6 +22,8 @@
 #include <common_types.h>
 #include <kernel_params.h>
 
+uintptr_t getMaxRamAddr();
+
 template<typename T>
 static inline T* physToVirtual(T* ptr)
 {
@@ -39,3 +41,16 @@ static inline uintptr_t virtualToPhysInt(T* ptr)
 {
     return reinterpret_cast<uintptr_t>(ptr) - RAM_VIRTUAL_BASE;
 }
+
+static inline bool isPhysToVirtualConvertible(uintptr_t addr)
+{
+    return (addr < getMaxRamAddr());
+}
+
+template<typename T>
+static inline bool isRamMappingPtr(T* ptr)
+{
+    return (reinterpret_cast<uintptr_t>(ptr) >= RAM_VIRTUAL_BASE);
+}
+
+

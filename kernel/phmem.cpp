@@ -37,6 +37,7 @@ RamAllocator::RamAllocator()
 		void** startPtr = physToVirtualInt<void*>(region.m_start);
 		void** ptr = startPtr;
 		const size_t regSize = region.m_end - region.m_start;
+		m_maxRamAddr = kmax(m_maxRamAddr, region.m_end);
 		m_avaibleRamSize += regSize;
 		size_t pageCnt = regSize / PAGE_SIZE;
 		if (pageCnt == 0)
@@ -89,4 +90,9 @@ RamAllocator& RamAllocator::getInstance()
 {
 	static RamAllocator instance;
 	return instance;
+}
+
+KERNEL_SHARED uintptr_t getMaxRamAddr()
+{
+	return RamAllocator::getInstance().getMaxRamAddr();
 }

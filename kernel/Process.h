@@ -23,6 +23,7 @@
 #include <kthread.h>
 #include <klist.h>
 #include <kmutex.h>
+#include <KernelModule.h>
 #include "AbstractModule.h"
 
 class VirtualMemoryManager;
@@ -41,6 +42,7 @@ public:
 	bool addModule(AbstractModule* module);
 	bool removeModule(AbstractModule* module);
 	AbstractModule* moduleByName(const kstring& name) const;
+	void notityModules(const KernelModuleMessage& msg);
 	static Process& kernel();
 
 private:

@@ -18,6 +18,8 @@
    Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
+#include <KernelModule.h>
+
 extern void onModuleLoad();
 extern void onModuleUnload();
 extern void onSystemMessage(int msg, int arg, void* ptr);
@@ -47,35 +49,21 @@ static void __do_global_dtors(void)
 
 extern "C" int DllMainCRTStartup(void*, unsigned int reason, void* params)
 {
-	enum
-	{
-		moduleUnload = 0,
-		moduleLoad = 1,
-		systemMsg = 1000
-	};
-	
-	struct Msg
-	{
-		int m_msg; 
-		int m_arg; 
-		void* m_ptr;
-	};
-	
 	switch(reason)
 	{
-	case moduleUnload:
+	case KernelModuleUnload:
 		onModuleUnload();
 		__do_global_dtors();
 		break;
 		
-	case moduleLoad:
+	case KernelModuleLoad:
 		__do_global_ctors();
 		onModuleLoad();
 		break;
 		
-	case systemMsg:
+	case KernelModuleSystemMsg:
 	{
-		Msg* msg = static_cast<Msg*>(params);
+		KernelModuleMessage* msg = static_cast<KernelModuleMessage*>(params);
 		onSystemMessage(msg->m_msg, msg->m_arg, msg->m_ptr);
 		break;
 	}

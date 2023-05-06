@@ -33,13 +33,13 @@
 
 static void loadModules(const SystemConfig& config, KernelParams::Modules& params)
 {
+	params.m_count = 0;
 	if (config.m_bootModules.empty())
 		return;
 
 	println(L"Loading boot modules...");
 	auto& io = BootIo::getInstance();
 	auto& allocator = KernelAllocator::getInstance();
-	params.m_count = 0;
 	KernelParams::Modules::BootModule* pModules;
 	allocator.allocPageAlign(pModules, config.m_bootModules.size());
 	for (const kwstring& module : config.m_bootModules)
@@ -71,17 +71,17 @@ static void loadAcpi(KernelParams* params)
 	static const EFI_GUID acpiGuid = {0x8868e871, 0xe4f1, 0x11d3,
 		{0xbc, 0x22, 0x00, 0x80, 0xc7, 0x3c, 0x88, 0x81}};
 	const EFI_SYSTEM_TABLE* sysTable = getSystemTable();
-	params->m_acpiRsdp = nullptr;
+	params->m_acpiRsdpPhys = 0;
 	for (UINTN idx = 0; idx < sysTable->NumberOfTableEntries; ++idx)
 	{
 		EFI_CONFIGURATION_TABLE& confTable = sysTable->ConfigurationTable[idx];
 		if (kmemcmp(&confTable.VendorGuid, &acpiGuid, sizeof(acpiGuid)) == 0)
 		{
-			params->m_acpiRsdp = physToVirtual(confTable.VendorTable);
+			params->m_acpiRsdpPhys = reinterpret_cast<uintptr_t>(confTable.VendorTable);
 			break;
 		}
 	}
-	if (params->m_acpiRsdp == nullptr)
+	if (params->m_acpiRsdpPhys == 0)
 		panic(L"ACPI tables not found");
 }
 

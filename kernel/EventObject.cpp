@@ -25,8 +25,6 @@
 #include "TaskManager.h"
 #include "AbstractTimer.h"
 
-#include <conout.h>
-
 kevent::kevent()
 	: m_private(new EventObject())
 {

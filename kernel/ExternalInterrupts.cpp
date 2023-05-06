@@ -231,6 +231,11 @@ void ExternalInterrupts::initIoApic()
 			intData.m_irqHandlers.swap(othIntData.m_irqHandlers);
 		}
 	}
+	for (size_t irq = 0; irq < maxIrq; irq++)
+	{
+		if (m_data[irq].m_lockCounter.load(std::memory_order_relaxed) == 0)
+			lockIrq(irq);
+	}
 }
 
 void ExternalInterrupts::lockIrq(unsigned int irq)
@@ -290,19 +295,16 @@ bool ExternalInterrupts::deleteHandler(unsigned int irq, unsigned int id)
 	bool result = false;
 	InterruptData& intData = m_data[m_remapTable[irq]];
 	klock_guard lock(intData.m_mutex);
+	lockIrq(irq);
 	while (intData.m_irqActiveCounter.load(std::memory_order_relaxed) != 0)
 		cpuPause();
-	for (auto it = intData.m_irqHandlers.begin(); it != intData.m_irqHandlers.end();)
+	for (auto it = intData.m_irqHandlers.begin(); it != intData.m_irqHandlers.end(); ++it)
 	{
 		if (it->m_id == id)
 		{
-			it = intData.m_irqHandlers.erase(it);
+			intData.m_irqHandlers.erase(it);
 			result = true;
 			break;
-		}
-		else
-		{
-			++it;
 		}
 	}
 	if (!intData.m_irqHandlers.empty())
