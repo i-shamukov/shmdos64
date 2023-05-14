@@ -19,6 +19,7 @@
 */
 
 #pragma once
+#include <functional>
 #include <common_types.h>
 #include <kernel_export.h>
 
@@ -39,10 +40,11 @@ enum class IoResourceType
 
 class AbstractDevicePrivate;
 class IoResource;
+class AbstractDriver;
 class KERNEL_SHARED AbstractDevice
 {
 public:
-	AbstractDevice(DeviceClass deviceClass, const wchar_t* name, AbstractDevice* parent);
+	AbstractDevice(DeviceClass deviceClass, const wchar_t* name, AbstractDevice* parent, AbstractDriver* driver);
 	virtual ~AbstractDevice();
 	AbstractDevice* parent();
 	virtual void onInterruptMessage(int arg1, int arg2, void* data);
@@ -55,10 +57,12 @@ protected:
 	void removeInterruptHandler();
 	void eoi();
 	void postInterruptMessage(int arg1, int arg2, void* data);
+	void removeChildIf(const std::function<bool(AbstractDevice*)>& pred);
 
 private:
 	AbstractDevice(const AbstractDevice&) = delete;
 	AbstractDevice(AbstractDevice&&) = delete;
+    AbstractDevice& operator=(const AbstractDevice&) = delete;
 	virtual bool interruptHandler();
 
 private:

@@ -21,6 +21,7 @@
 
 #include <cpu.h>
 #include <IoResource.h>
+#include <AbstractDriver.h>
 #include "idt.h"
 #include "panic.h"
 #include "smp.h"
@@ -58,7 +59,7 @@ APIC_NULL_HANDLER(apicSpuriousInterrupt)
 static LocalApic::ApicCpuId g_systemCpuIdToApicMap[MAX_CPU] = {};
 
 LocalApic::LocalApic()
-	: AbstractDevice(DeviceClass::System, L"Local APIC", AbstractDevice::root())
+	: AbstractDevice(DeviceClass::System, L"Local APIC", AbstractDevice::root(), AbstractDriver::kernel())
 	, m_mmioBase(cpuAlignAddrLo(cpuReadMSR(CPU_MSR_APIC_BASE) & cpuMaxPhysAddr()))
 {
 	if (m_mmioBase == 0)

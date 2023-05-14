@@ -23,9 +23,10 @@
 #include "InterruptQueuePool.h"
 #include "AbstractDevice_p.h"
 #include "TaskManager.h"
+#include "AbstractDriver_p.h"
 
-AbstractDevice::AbstractDevice(DeviceClass deviceClass, const wchar_t* name, AbstractDevice* parent)
-	: m_private(new AbstractDevicePrivate(this, deviceClass, name, parent))
+AbstractDevice::AbstractDevice(DeviceClass deviceClass, const wchar_t* name, AbstractDevice* parent, AbstractDriver* driver)
+	: m_private(new AbstractDevicePrivate(this, deviceClass, name, parent, driver))
 {
 
 }
@@ -62,7 +63,7 @@ IoResource* AbstractDevice::io(uint64_t base, size_t size, IoResourceType type)
 
 AbstractDevice* AbstractDevice::root()
 {
-	static AbstractDevice rootDevice(DeviceClass::System, L"System", nullptr);
+	static AbstractDevice rootDevice(DeviceClass::System, L"System", nullptr, AbstractDriver::kernel());
 	return &rootDevice;
 }
 
@@ -104,21 +105,43 @@ void AbstractDevice::eoi()
 	ExternalInterrupts::system().eoi(m_private->m_irq);
 }
 
-AbstractDevicePrivate::AbstractDevicePrivate(AbstractDevice* obj, DeviceClass deviceClass, const wchar_t* name, AbstractDevice* parent)
+void AbstractDevice::removeChildIf(const std::function<bool(AbstractDevice*)>& pred)
+{
+	klist<AbstractDevice*>& childrens = m_private->m_childrens;
+	for (auto it = childrens.begin(); it != childrens.end(); )
+	{
+		AbstractDevice* dev = *it;
+		if (pred(dev))
+		{
+			it = childrens.erase(it);
+			dev->m_private->m_isManualRemoved = true;
+			delete dev;
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+AbstractDevicePrivate::AbstractDevicePrivate(AbstractDevice* obj, DeviceClass deviceClass, const wchar_t* name, AbstractDevice* parent, AbstractDriver* driver)
 	: m_deviceClass(deviceClass)
 	, m_name(name)
 	, m_obj(obj)
 	, m_parent(parent)
+	, m_driver(driver)
 {
 	m_interruptQueuePool = (TaskManager::system() != nullptr) ? &InterruptQueuePool::system() : nullptr;
+	m_driver->m_private->addDevice(obj);
 }
 
 AbstractDevicePrivate::~AbstractDevicePrivate()
 {
 	m_isDestroyed = true;
+	m_driver->m_private->removeDevice(m_obj);
 	removeInterruptHandler();
 
-	if ((m_parent != nullptr) && !m_parent->m_private->m_isDestroyed)
+	if ((m_parent != nullptr) && !m_parent->m_private->m_isDestroyed && !m_isManualRemoved)
 		m_parent->m_private->m_childrens.remove_first(m_obj);
 
 	for (AbstractDevice* child : m_childrens)

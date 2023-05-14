@@ -37,6 +37,7 @@ extern "C"
 #include <kunordered_map.h>
 #include <pci.h>
 #include <AbstractDevice.h>
+#include <AbstractDriver.h>
 #include <ThreadPool.h>
 #include <kthread.h>
 #include <common_lib.h>
@@ -328,7 +329,7 @@ extern "C"
         {
         public:
             AcpiDevice(ACPI_OSD_HANDLER handler, void* context)
-                : AbstractDevice(DeviceClass::System, L"ACPI SCI", AbstractDevice::root())
+                : AbstractDevice(DeviceClass::System, L"ACPI SCI", AbstractDevice::root(), AbstractDriver::kernel())
                 , m_handler(handler)
                 , m_context(context)
             {

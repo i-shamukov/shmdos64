@@ -78,7 +78,7 @@ struct KernelParams
     } m_modules;
 
     uintptr_t m_stackBase;
-    void* m_acpiRsdp;
+    uintptr_t m_acpiRsdpPhys;
 	uintptr_t m_imageBase; 
 };
 

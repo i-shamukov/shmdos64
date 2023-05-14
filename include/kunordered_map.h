@@ -209,6 +209,15 @@ public:
 		return end();
 	}
 
+	T& operator[](const Key& key)
+	{
+		iterator it = find(key);
+		if (it != end())
+			return it->second;
+		
+		return emplace(key, T()).first->second;
+	}
+
 	iterator erase(iterator it)
 	{
 		it.m_node->m_data.~value_type();

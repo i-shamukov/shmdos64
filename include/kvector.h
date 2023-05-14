@@ -60,6 +60,12 @@ public:
 		_move(other);
 	}
 
+	kvector(std::initializer_list<T> lst)
+	{
+		_init(lst.size());
+		_copy_buf(m_buf, lst.begin(), lst.size());
+	}
+
 	~kvector()
 	{
 		_free_all();

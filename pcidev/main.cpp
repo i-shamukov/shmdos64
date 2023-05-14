@@ -1,8 +1,8 @@
 /*
-   common_lib.h
-   Kernel shared header
+   main.cpp
+   PCI bus driver main
    SHM DOS64
-   Copyright (c) 2023, Ilya Shamukov <ilya.shamukov@gmail.com>
+   Copyright (c) 2023, Ilya Shamukov, ilya.shamukov@gmail.com
    
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the Free
@@ -19,13 +19,19 @@
    Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#pragma once
-#include <common_types.h>
+#include "PciBus.h"
 
-static const int K_RAND_MAX = 32767;
-int krand();
+void onModuleLoad()
+{
+    PciBusEnumerator::instance().printDeviceList();
+}
 
-void sleepMs(TimePoint delayMs);
-void sleepUs(TimePoint delayUs);
-uintptr_t acpiRsdpPhys();
-bool chechRedirectIrq(unsigned int oldIrq, unsigned int newIrq);
+void onModuleUnload()
+{
+
+}
+
+void onSystemMessage(int, int, void*)
+{
+
+}

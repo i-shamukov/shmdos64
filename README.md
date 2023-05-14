@@ -34,7 +34,6 @@ This project is my hobby. In this project I am implementing some of my ideas for
 For build all projects need CMake with MinGW-w64 compiler. No special environment, package or library settings are required.
 
 ## Plans for future
-- PCI Device enumerator
 - kernel asynchronous IO manager (async read-write files, etc)
 - support some parts of USB, for example, xHCI
 - support FAT (r/w) and NTFS (r/o)

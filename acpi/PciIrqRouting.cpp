@@ -29,6 +29,7 @@ extern "C"
 #include <pci.h>
 #include <IoResource.h>
 #include <kvector.h>
+#include <common_lib.h>
 #include "PciIrqRouting.h"
 
 
@@ -87,7 +88,7 @@ public:
     {
         static char pciBridgeObject[] = "PNP0A03";
         AcpiGetDevices(pciBridgeObject, &PciIrqEnumerator::acpiProcessSystemBridge, this, nullptr);
-        updaptePciConf();
+        updatePciConf();
     }
 
 private:
@@ -197,7 +198,7 @@ private:
         }
     }
 
-    void updaptePciConf()
+    void updatePciConf()
     {
         print(L"PCI IRQ remapping: ");
         for (const DeviceRouting& routing : m_routing)
@@ -217,11 +218,12 @@ private:
                     continue;
 
                 const unsigned int pin = curIrqPin >> 8;
+                const unsigned int oldIrq = curIrqPin & 0xFF;
                 if (pin == 0)
                     continue;
 
                 const unsigned int newIrq = routing.m_pinToIrq[pin - 1];
-                if (newIrq != 0)
+                if (chechRedirectIrq(oldIrq, newIrq))
                 {
                     pciSpace->out8(PciConfIrq, newIrq);
                     print(L'[', routing.m_bus, L' ', routing.m_device, L' ', function, L"]=", newIrq, L' ');

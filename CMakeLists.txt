@@ -60,4 +60,5 @@ add_subdirectory(kernel)
 add_subdirectory(moduleinit)
 add_subdirectory(pci)
 add_subdirectory(acpi)
+add_subdirectory(pcidev)
 

@@ -21,6 +21,7 @@
 
 #include <cpu.h>
 #include <conout.h>
+#include <AbstractDriver.h>
 #include "idt.h"
 #include "panic.h"
 #include "AcpiTables.h"
@@ -233,7 +234,7 @@ static void disablePic()
 }
 
 ExternalInterrupts::ExternalInterrupts()
-	: AbstractDevice(DeviceClass::System, L"IO APIC", AbstractDevice::root())
+	: AbstractDevice(DeviceClass::System, L"IO APIC", AbstractDevice::root(), AbstractDriver::kernel())
 {
 	for (unsigned int irq = 0; irq < MaxIrq; irq++)
 		m_remapTable[irq] = irq;
@@ -298,10 +299,13 @@ void ExternalInterrupts::initIoApic()
 	disablePic();
 	for (const ApicIsaRemappingEntry& entry : AcpiTables::instance().isaRemapping())
 	{
-		if (entry.m_sourceIrq >= MaxIsaIrq)
+		if ((entry.m_sourceIrq >= MaxIrq) || (entry.m_apicIrq >= MaxIrq))
 			continue;
 
 		InterruptData& intData = m_data[entry.m_apicIrq];
+		if (intData.m_mmio == nullptr)
+			continue;
+		
 		uint32_t& apicReg = intData.m_loCache;
 		if (entry.m_polarity == ApicIsaRemappingEntry::ActiveLow)
 			apicReg |= IoApicActivLow;
@@ -315,6 +319,7 @@ void ExternalInterrupts::initIoApic()
 			m_remapTable[entry.m_sourceIrq] = entry.m_apicIrq;
 			intData.m_irqHandlers.swap(othIntData.m_irqHandlers);
 		}
+		m_irqHasBeenRedirected[entry.m_sourceIrq] = true;
 	}
 	for (size_t irq = 0; irq < maxIrq; irq++)
 	{
@@ -425,10 +430,31 @@ void ExternalInterrupts::eoi(unsigned int irq)
 	++m_data[irq].m_eoiCounter;
 }
 
+// probably not best implementation
+bool ExternalInterrupts::chechRedirectIrq(unsigned int oldIrq, unsigned int newIrq) const
+{
+	if ((newIrq == 0) || (newIrq >= MaxIrq))
+		return false;
+	
+	if (m_data[newIrq].m_mmio == nullptr)
+		return false;
+
+	if ((oldIrq < MaxIrq) && m_irqHasBeenRedirected[oldIrq])
+		return false;
+	
+	if (m_irqHasBeenRedirected[newIrq])
+		return false;
+
+	return true;
+}
+
 ExternalInterrupts& ExternalInterrupts::system()
 {
 	static ExternalInterrupts exint;
 	return exint;
 }
 
-
+bool KERNEL_SHARED chechRedirectIrq(unsigned int oldIrq, unsigned int newIrq)
+{
+	return ExternalInterrupts::system().chechRedirectIrq(oldIrq, newIrq);
+}

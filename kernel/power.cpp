@@ -24,6 +24,7 @@
 #include <cpu.h>
 #include <KernelModule.h>
 #include <AbstractDevice.h>
+#include <AbstractDriver.h>
 #include "idt.h"
 #include "panic.h"
 #include "LocalApic.h"
@@ -95,7 +96,7 @@ public:
 
 private:
     PowerButtonDevice()
-        : AbstractDevice(DeviceClass::System, L"Power Button", AbstractDevice::root())
+        : AbstractDevice(DeviceClass::System, L"Power Button", AbstractDevice::root(), AbstractDriver::kernel())
     {
 
     }

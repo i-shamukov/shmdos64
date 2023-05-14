@@ -34,6 +34,7 @@
 #include <kunordered_map.h>
 #include <ThreadPool.h>
 #include <AbstractDevice.h>
+#include <AbstractDriver.h>
 #include "phmem.h"
 #include "common_lib.h"
 #include "Heap.h"
@@ -483,7 +484,7 @@ DEF_TEST(interruptMessageTest)
 	{
 	public:
 		TestDevice() 
-			: AbstractDevice(DeviceClass::System, L"Test", AbstractDevice::root())
+			: AbstractDevice(DeviceClass::System, L"Test", AbstractDevice::root(), AbstractDriver::kernel())
 		{
 			
 		}

@@ -1,6 +1,6 @@
 /*
-   common_lib.h
-   Kernel shared header
+   AbstractDriver_p.h
+   Kernel header
    SHM DOS64
    Copyright (c) 2023, Ilya Shamukov <ilya.shamukov@gmail.com>
    
@@ -20,12 +20,28 @@
 */
 
 #pragma once
-#include <common_types.h>
+#include <AbstractDriver.h>
+#include <AbstractDevice.h>
+#include <kstring.h>
+#include <kmutex.h>
+#include <klist.h>
+#include <memory>
 
-static const int K_RAND_MAX = 32767;
-int krand();
+class AbstractDriverPrivate
+{
+public:
+   AbstractDriverPrivate(const wchar_t* name);
+   ~AbstractDriverPrivate();
+   void addDevice(AbstractDevice* device);
+   void removeDevice(AbstractDevice* device);
 
-void sleepMs(TimePoint delayMs);
-void sleepUs(TimePoint delayUs);
-uintptr_t acpiRsdpPhys();
-bool chechRedirectIrq(unsigned int oldIrq, unsigned int newIrq);
+private:
+	AbstractDriverPrivate(const AbstractDriverPrivate&) = delete;
+	AbstractDriverPrivate(AbstractDriverPrivate&&) = delete;
+    AbstractDriverPrivate& operator=(const AbstractDriverPrivate&) = delete;
+
+private:
+    kwstring m_name;
+    klist<std::unique_ptr<AbstractDevice>> m_devList;
+    kmutex m_devListMtx;
+};

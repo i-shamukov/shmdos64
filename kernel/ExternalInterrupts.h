@@ -45,6 +45,7 @@ public:
 	void unlockIrqSafety(unsigned int irq);
 	unsigned int installHandler(unsigned int irq, Handler proc, void* obj);
 	bool deleteHandler(unsigned int irq, unsigned int id);
+	bool chechRedirectIrq(unsigned int oldIrq, unsigned int newIrq) const;
 
 private:
 	ExternalInterrupts(const ExternalInterrupts&) = delete;
@@ -82,6 +83,6 @@ private:
 		std::atomic<unsigned int> m_irqActiveCounter{0};
 	} m_data[MaxIrq];
 	unsigned int m_remapTable[MaxIrq];
-
+	bool m_irqHasBeenRedirected[MaxIrq] = {};
 	template<unsigned int irq> friend void allIrqHandler();
 };

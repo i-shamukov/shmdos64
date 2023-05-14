@@ -1,6 +1,6 @@
 /*
-   common_lib.h
-   Kernel shared header
+   AbstractDriver.h
+   Shared header
    SHM DOS64
    Copyright (c) 2023, Ilya Shamukov <ilya.shamukov@gmail.com>
    
@@ -20,12 +20,24 @@
 */
 
 #pragma once
-#include <common_types.h>
+#include <kernel_export.h>
 
-static const int K_RAND_MAX = 32767;
-int krand();
+class AbstractDriverPrivate;
+class KERNEL_SHARED AbstractDriver
+{
+public:
+	AbstractDriver(const wchar_t* name);
+	virtual ~AbstractDriver();
 
-void sleepMs(TimePoint delayMs);
-void sleepUs(TimePoint delayUs);
-uintptr_t acpiRsdpPhys();
-bool chechRedirectIrq(unsigned int oldIrq, unsigned int newIrq);
+    static AbstractDriver* kernel();
+
+private:
+	AbstractDriver(const AbstractDriver&) = delete;
+	AbstractDriver(AbstractDriver&&) = delete;
+    AbstractDriver& operator=(const AbstractDriver&) = delete;
+
+private:
+	AbstractDriverPrivate* m_private;
+
+    friend class AbstractDevicePrivate;
+};

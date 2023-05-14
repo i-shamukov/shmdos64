@@ -20,12 +20,13 @@
 */
 
 #include <conout.h>
+#include <AbstractDriver.h>
 #include "PciRoot.h"
 #include "PciLegacy.h"
 
 
 PciRoot::PciRoot()
-	: AbstractDevice(DeviceClass::PciBus, L"PCI bus", AbstractDevice::root())
+	: AbstractDevice(DeviceClass::PciBus, L"PCI bus", AbstractDevice::root(), AbstractDriver::kernel())
 	, m_io(AbstractDevice::io(0x0CF8, 8, IoResourceType::IoSpace))
 	, m_exSegments(getSystemEnhancedPciSegments())
 {

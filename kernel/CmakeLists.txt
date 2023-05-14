@@ -52,6 +52,7 @@ set(HEADERS
     ${KERNEL_MODULE_INCLUDE_ROOT}/common_lib.h
     ${KERNEL_MODULE_INCLUDE_ROOT}/power.h
     ${KERNEL_MODULE_INCLUDE_ROOT}/KernelModule.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/AbstractDriver.h
 )
 
 set(SOURCES
@@ -96,6 +97,7 @@ set(SOURCES
     kchrono.cpp
     power.cpp
     KernelModule.cpp
+    AbstractDriver.cpp
 )
 
 add_executable(kernel ${HEADERS} ${SOURCES})

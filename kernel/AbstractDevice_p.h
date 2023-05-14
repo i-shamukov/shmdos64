@@ -31,7 +31,7 @@
 class AbstractDevicePrivate
 {
 public:
-	AbstractDevicePrivate(AbstractDevice* obj, DeviceClass deviceClass, const wchar_t* name, AbstractDevice* parent);
+	AbstractDevicePrivate(AbstractDevice* obj, DeviceClass deviceClass, const wchar_t* name, AbstractDevice* parent, AbstractDriver* m_driver);
 	~AbstractDevicePrivate();
 	void removeInterruptHandler();
 
@@ -47,11 +47,13 @@ private:
 	AbstractDevice* m_obj;
 	AbstractDevice* m_parent;
 	bool m_isDestroyed = false;
+	bool m_isManualRemoved = false;
 	klist<AbstractDevice*> m_childrens;
 	kvector<std::unique_ptr<IoResource>> m_ioResources;
 	unsigned int m_irq;
 	unsigned int m_interruptHandlerId = 0;
 	InterruptQueuePool* m_interruptQueuePool = nullptr;
+	AbstractDriver* m_driver;
 
 	friend class AbstractDevice;
 };

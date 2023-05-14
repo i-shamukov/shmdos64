@@ -36,9 +36,15 @@ template <bool StopMultitasking>
 class QueuedSpinLockBase
 {
 public:
+   QueuedSpinLockBase() { }
 	void lock();
 	void unlock();
 	bool try_lock();
+
+private:
+   QueuedSpinLockBase(const QueuedSpinLockBase&) = delete;
+   QueuedSpinLockBase(QueuedSpinLockBase&&) = delete;
+   QueuedSpinLockBase& operator=(const QueuedSpinLockBase&) = delete;
 
 private:
 	std::atomic<QueuedSpinLockEntry*> m_tail{ nullptr};

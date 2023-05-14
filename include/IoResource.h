@@ -1,6 +1,7 @@
 /*
    IoResource.h
-   Shared header for SHM DOS64
+   Kernel shared header 
+   SHM DOS64
    Copyright (c) 2023, Ilya Shamukov <ilya.shamukov@gmail.com>
    
    This program is free software; you can redistribute it and/or modify it

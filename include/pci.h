@@ -36,6 +36,7 @@ enum PciConfigurationSpaceHeader
    PciConfSubclass = 0x0A,
    PciConfClass = 0x0B,
    PciConfSpaceSubclassClass = 0x0A,
+   PciConfComplexClassId = 0x08,
    PciConfCacheLineSize = 0x0C,
    PciConfLatencyTimer = 0x0D,
    PciConfHeaderType = 0x0E,
@@ -55,6 +56,7 @@ enum PciConfigurationSpacePciToPciBridge
 
 enum PciConfigurationSpaceDevice
 {
+   PciConfBar0 = 0x10,
    PciConfIrqPin = 0x3C,
    PciConfIrq = 0x3C
 };
@@ -68,6 +70,16 @@ enum PciSubclassCodesBridge
 {
    PciSubclassCodePciToPciBridge = 0x04
 };
+
+namespace PciLimits
+{
+   enum
+   {
+      Functions = 8,
+      Devices = 32,
+      Buses = 256
+   };
+}
 
 struct SystemEnhancedPciSegment
 {

@@ -21,6 +21,7 @@
 
 #include <IoResource.h>
 #include <conout.h>
+#include <AbstractDriver.h>
 #include "AcpiTables.h"
 #include "panic.h"
 #include "Hpet.h"
@@ -49,7 +50,7 @@ static inline int timerBaseReg(int timer)
 }
 
 Hpet::Hpet()
-	: AbstractDevice(DeviceClass::System, L"HPET", AbstractDevice::root())
+	: AbstractDevice(DeviceClass::System, L"HPET", AbstractDevice::root(), AbstractDriver::kernel())
 	, m_mmio(io(AcpiTables::instance().hpetMmioBase(), g_hpetMmioSpaceSize, IoResourceType::MmioSpace))
 {
 	static const uint64_t legRtCap = 0x8000;
