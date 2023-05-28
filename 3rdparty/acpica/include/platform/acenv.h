@@ -244,6 +244,9 @@
 #if defined(_LINUX) || defined(__linux__)
 #include "aclinux.h"
 
+#elif defined(_SHMDOS64)
+#include "acshmdos64.h"
+
 #elif defined(_APPLE) || defined(__APPLE__)
 #include "acmacosx.h"
 

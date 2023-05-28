@@ -11,4 +11,4 @@ file(GLOB_RECURSE SRC CONFIGURE_DEPENDS
 add_library(acpica STATIC ${SRC})
 target_include_directories(acpica PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
 target_compile_options(acpica PRIVATE -mno-red-zone -mno-sse)
-target_compile_definitions(acpica PRIVATE ACPI_USE_LOCAL_CACHE _CYGWIN)
+target_compile_definitions(acpica PRIVATE _SHMDOS64)
