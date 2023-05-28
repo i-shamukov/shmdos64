@@ -21,6 +21,7 @@
 
 #pragma once
 #include <common_types.h>
+#include <MemoryType.h>
 
 class IoResource
 {
@@ -37,4 +38,4 @@ public:
 };
 
 IoResource* makeIoPortResource(uint16_t portBase, uint16_t size);
-IoResource* makeMmioResource(uintptr_t physAddr, size_t size);
+IoResource* makeMmioResource(uintptr_t physAddr, size_t size, MemoryType memoryType = MemoryType::CacheDisabled);

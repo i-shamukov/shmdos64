@@ -49,9 +49,26 @@ void KernelAllocator::initMemoryMap()
 	bs->GetMemoryMap(&tableSize, nullptr, &key, &descSize, &ver);
 	if (tableSize == 0)
 		panic(L"Failed to get size of memory map");
+
 	kvector<char> tableData(tableSize);
-	if (bs->GetMemoryMap(&tableSize, reinterpret_cast<EFI_MEMORY_DESCRIPTOR*>(tableData.data()), &key, &descSize, &ver) != EFI_SUCCESS)
-		panic(L"Failed to get memory map");
+	EFI_STATUS mmapStatus;
+	for ( ; ; )
+	{
+		mmapStatus = bs->GetMemoryMap(&tableSize, reinterpret_cast<EFI_MEMORY_DESCRIPTOR*>(tableData.data()), &key, &descSize, &ver);
+		if (mmapStatus == EFI_SUCCESS)
+			break;
+		
+		if (mmapStatus == EFI_BUFFER_TOO_SMALL)
+		{
+			tableSize *= 2;
+			tableData.resize(tableSize);
+		}
+		else
+		{
+			println(L"GetMemoryMap failed: ", hex(mmapStatus));
+			panic(L"Failed to get memory map");
+		}
+	}
 
 	println(L"Dump memory map:");
 	kvector<KernelParams::PhysicalMemory::PhysicalMemoryRegion> tmpRegions;

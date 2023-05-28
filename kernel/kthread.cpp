@@ -27,8 +27,6 @@
 #include "panic.h"
 #include "ThreadPrivate.h"
 
-#include <conout.h>
-
 static const TimePoint g_defaultDesiredTaskMaxWaitTimeMs = 10;
 
 kthread::kthread()
@@ -174,7 +172,7 @@ void ThreadPrivate::initStack(bool user)
 	{
 		frame.m_cs = SYSTEM_CODE_SEGMENT;
 		frame.m_ss = SYSTEM_DATA_SEGMENT;
-		frame.m_rsp = m_task->m_stackTop - sizeof(uintptr_t);
+		frame.m_rsp = m_task->m_stackTop - 2 * sizeof(uintptr_t); // entryProc can use memory above RSP :( 
 	}
 	frame.m_rip = reinterpret_cast<uintptr_t>(&ThreadPrivate::entryProc);
 	frame.m_rflags = 0x202;

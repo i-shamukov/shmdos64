@@ -54,7 +54,7 @@ IoResource* PciRoot::makeIoResource(const PciAddress& pciAddr)
 	return new PciLegacy(m_io, pciAddr);
 }
 
-__declspec(dllexport) IoResource* makePciSpaceIoResource(const PciAddress& pciAddr)
+PCI_SHARED IoResource* makePciSpaceIoResource(const PciAddress& pciAddr)
 {
 	return PciRoot::instance().makeIoResource(pciAddr);
 }

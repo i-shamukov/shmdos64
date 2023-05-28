@@ -58,9 +58,8 @@ void KernelMain()
 	InterruptQueuePool::system();
 	KernelPower::init();
 	PeLoader::loadKernelModules();
-
 	runTests();
-
+	
 	TaskManager::terminateCurrentTask();
 	PANIC(L"Failed to terminate thread");
 }

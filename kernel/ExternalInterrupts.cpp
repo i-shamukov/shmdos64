@@ -66,9 +66,9 @@ enum
 	IoApicMaskIrq = (1 << 16)
 };
 
-static inline unsigned int irqRegBase(unsigned int irq)
+static inline unsigned int irqRegBase(unsigned int irq, unsigned int offset)
 {
-	return (2 * irq + IoApicRedirectionTableBaseInternalReg);
+	return (2 * (irq - offset) + IoApicRedirectionTableBaseInternalReg);
 }
 
 static inline void eoiRaw(unsigned)
@@ -265,19 +265,24 @@ void ExternalInterrupts::initIoApic()
 		IoResource* mmio = io(ioApic.m_mmioBase, IoApicMmioSize, IoResourceType::MmioSpace);		
 		const uint32_t verReg = readData(mmio, IoApicVersionInternalReg);
 		println(L"IOAPIC version ", hex(static_cast<uint8_t>(verReg & 0xFF), false));
-		const unsigned int mumIrqs = ((verReg >> 16) & 0xFF) + 1;
+		const unsigned int numIrqs = ((verReg >> 16) & 0xFF) + 1;
 		const unsigned int irqBase = ioApic.m_irqBase;
-		unsigned int irqEnd = irqBase + mumIrqs;
+		unsigned int irqEnd = irqBase + numIrqs;
+		println(L"IOAPIC irq range ", irqBase, L" - ", irqEnd - 1);
 		if (irqEnd > MaxIrq)
 		{
-			println(L"APIC: too many irq, base=", irqBase, L", num=", mumIrqs);
+			println(L"IOAPIC: too many irq");
 			if (irqBase >= MaxIrq)
 				continue;
 
 			irqEnd = MaxIrq;
 		}
-		for (unsigned int irq = 0; irq < irqEnd; irq++)
-			m_data[irq].m_mmio = mmio;
+		for (unsigned int irq = irqBase; irq < irqEnd; irq++)
+		{
+			InterruptData& intData = m_data[irq];
+			intData.m_mmio = mmio;
+			intData.m_irqOffset = irqBase;
+		}
 		maxIrq = kmax(maxIrq, irqEnd);
 	}
 	if (maxIrq < 24)
@@ -285,11 +290,13 @@ void ExternalInterrupts::initIoApic()
 
 	for (size_t irq = 0; irq < maxIrq; irq++)
 	{
-		if (m_data[irq].m_mmio != nullptr)
+		InterruptData& intData = m_data[irq];
+		if (intData.m_mmio != nullptr)
 		{
-			m_data[irq].m_loCache = (CPU_IRQ0_VECTOR + irq) | IoApicMaskIrq;
+			intData.m_loCache = (CPU_IRQ0_VECTOR + irq) | IoApicMaskIrq;
 			if (irq >= MaxIsaIrq)
-				m_data[irq].m_loCache |= IoApicActivLow | IoApicLevelSv;
+				intData.m_loCache |= IoApicActivLow | IoApicLevelSv;
+			writeData(intData.m_mmio, irqRegBase(irq, intData.m_irqOffset) + 1, BOOT_CPU_ID << 24);
 		}
 		else
 		{
@@ -338,7 +345,7 @@ void ExternalInterrupts::lockIrq(unsigned int irq)
 	if (++intData.m_lockCounter == 1)
 	{
 		intData.m_loCache |= IoApicMaskIrq;
-		writeData(intData.m_mmio, irqRegBase(irq), intData.m_loCache);
+		writeData(intData.m_mmio, irqRegBase(irq, intData.m_irqOffset), intData.m_loCache);
 	}
 }
 
@@ -352,7 +359,7 @@ void ExternalInterrupts::unlockIrq(unsigned int irq)
 	if (--intData.m_lockCounter == 0)
 	{
 		intData.m_loCache &= ~IoApicMaskIrq;
-		writeData(intData.m_mmio, irqRegBase(irq), intData.m_loCache);
+		writeData(intData.m_mmio, irqRegBase(irq, intData.m_irqOffset), intData.m_loCache);
 	}
 }
 

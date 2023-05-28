@@ -310,13 +310,15 @@ DEF_TEST(threadMultipleTest)
 
 DEF_TEST(threadFpuTest)
 {
-	double result = 0.;
-	static const double sinArg = 3.14159265 / 4;
-	kthread thread([&result] {
-		result = std::sin(sinArg);
+	const double magic = 11.22;
+	volatile double result1 = 0.0;
+	const double rnd = krand();
+	kthread thread([&result1, &rnd, &magic] {
+		result1 = magic + rnd;
 	});
 	thread.join();
-	ASSERT(std::sin(sinArg) == result);
+	volatile double result2 = rnd + magic;
+	ASSERT(result2 == result1);
 }
 
 DEF_TEST(mutexTest)
@@ -564,6 +566,23 @@ DEF_TEST(kunorderedMapTest)
 	ASSERT(sz == m.size());
 }
 
+DEF_TEST(fastTimepointTest)
+{
+	const unsigned int testTimeoutMs = 20;
+	AbstractTimer* timer = AbstractTimer::system();
+	TimePoint tp = timer->timepoint();
+	TimePoint oldFastTp = timer->fastTimepoint();
+	const TimePoint endTime = tp + timer->fromMilliseconds(testTimeoutMs);
+	while (tp < endTime)
+	{
+		const TimePoint fastTp = timer->fastTimepoint();
+		ASSERT(oldFastTp <= fastTp);
+		tp = timer->timepoint();
+		ASSERT(fastTp <= tp);
+		oldFastTp = fastTp;
+	}
+}
+
 void runTests()
 {
 	println(L"Start tests:");
@@ -585,5 +604,6 @@ void runTests()
 	interruptMessageTest();
 	smpTest();
 	kunorderedMapTest();
+	fastTimepointTest();
 	println(L"Tests completed ");
 }

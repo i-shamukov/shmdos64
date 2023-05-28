@@ -617,7 +617,15 @@ int kvprintf(const char* format, va_list arg)
 						print(fill);
 				}
 				p++;
+				width = 0;
+				precision = 0;
 				state = 0;
+				left = false;
+    			sign = false; 
+    			space = false; 
+   				number = false; 
+    			numPositive = true;
+				fill = ' ';
 				break;
 
 			case 3:
@@ -723,4 +731,30 @@ extern "C"
     {
         return __imp_isspace(ch);
     }
+
+	KERNEL_SHARED int strncmp(const char* str1, const char* str2, size_t size)
+    {
+        return kstrncmp(str1, str2, size);
+    }
+
+	KERNEL_SHARED void* memmove(void* dst, const void* src, size_t size)
+	{
+		uint8_t* pbDst = static_cast<uint8_t*>(dst);
+    	const uint8_t* pbSrc = static_cast<const uint8_t*>(src);
+		if (pbDst <= pbSrc)
+			return kmemcpy(dst, src, size);
+
+		const uint8_t* pbSrcReverse = pbSrc + size;
+		if (pbDst >= pbSrcReverse)
+			return kmemcpy(dst, src, size);
+
+		uint8_t* pbDstReverse = pbDst + size;
+		while (pbDstReverse > pbDst)
+		{
+			--pbSrcReverse;
+			--pbDstReverse;
+			*pbDstReverse = *pbSrcReverse;
+		}
+		return dst;
+	}
 }

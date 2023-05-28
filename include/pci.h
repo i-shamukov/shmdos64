@@ -22,6 +22,13 @@
 #include <common_types.h>
 #include <kvector.h>
 
+
+#ifdef PCI_EXPORT
+   #define PCI_SHARED __declspec(dllexport)
+#else
+   #define PCI_SHARED
+#endif
+
 enum PciConfigurationSpaceHeader
 {
    PciConfSpaceVendorId = 0x00,
@@ -58,7 +65,8 @@ enum PciConfigurationSpaceDevice
 {
    PciConfBar0 = 0x10,
    PciConfIrqPin = 0x3C,
-   PciConfIrq = 0x3C
+   PciConfIrq = 0x3C,
+   PciConfPin = 0x3D
 };
 
 enum PciClassCodes
@@ -77,7 +85,8 @@ namespace PciLimits
    {
       Functions = 8,
       Devices = 32,
-      Buses = 256
+      Buses = 256,
+      Pins = 4
    };
 }
 
@@ -99,3 +108,7 @@ const kvector<SystemEnhancedPciSegment>& getSystemEnhancedPciSegments();
 
 class IoResource;
 IoResource* makePciSpaceIoResource(const PciAddress& pciAddr);
+
+bool registerPciRoutingBus(unsigned int bus, unsigned int parentBus, unsigned int device);
+bool addPciDeviceRouting(unsigned int bus, unsigned int device, unsigned int pin, unsigned int irq);
+unsigned int getPciDeviceIrq(unsigned int bus, unsigned int device, unsigned int pin);

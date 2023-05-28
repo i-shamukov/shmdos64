@@ -24,8 +24,8 @@
 #include "IoResourceImpl.h"
 #include <VirtualMemoryManager.h>
 
-MmioSpace::MmioSpace(uintptr_t addr, size_t size)
-	: m_ptr(static_cast<uint8_t*> (VirtualMemoryManager::system().mapMmio(addr, size)))
+MmioSpace::MmioSpace(uintptr_t addr, size_t size, MemoryType memoryType)
+	: m_ptr(static_cast<uint8_t*> (VirtualMemoryManager::system().mapMmio(addr, size, memoryType)))
 	, m_size(size)
 {
 }
@@ -127,7 +127,7 @@ KERNEL_SHARED IoResource* makeIoPortResource(uint16_t portBase, uint16_t size)
 	return new IoSpace(portBase, size);
 }
 
-KERNEL_SHARED IoResource* makeMmioResource(uintptr_t physAddr, size_t size)
+KERNEL_SHARED IoResource* makeMmioResource(uintptr_t physAddr, size_t size, MemoryType memoryType)
 {
-	return new MmioSpace(physAddr, size);
+	return new MmioSpace(physAddr, size, memoryType);
 }

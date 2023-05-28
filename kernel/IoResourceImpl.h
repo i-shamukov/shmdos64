@@ -25,7 +25,7 @@
 class MmioSpace : public IoResource
 {
 public:
-	MmioSpace(uintptr_t addr, size_t size);
+	MmioSpace(uintptr_t addr, size_t size, MemoryType memoryType);
 	~MmioSpace();
 	void out8(uint64_t reg, uint8_t value) override;
 	void out16(uint64_t reg, uint16_t value) override;

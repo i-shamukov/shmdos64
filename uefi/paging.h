@@ -27,7 +27,7 @@ class PagingManager64
 {
 public:
 	static PagingManager64& getInstance();
-	void* mapToKernel(const void* physPtr, size_t size, bool readOnly);
+	void* mapToKernel(const void* physPtr, size_t size, bool readOnly, bool wc = false);
 	void storeParams(KernelParams::VirtualMemory& params);
 	void protectPages(uintptr_t virtualBase, size_t size);
 	void setupVirtualMemory();
@@ -37,7 +37,7 @@ private:
 	PagingManager64(const PagingManager64&) = delete;
 	PagingManager64(PagingManager64&&) = delete;
 	void map1GbPage(uintptr_t virtualBase, uintptr_t physBase);
-	void mapPage(uintptr_t virtualBase, uintptr_t physBase, bool readOnly);
+	void mapPage(uintptr_t virtualBase, uintptr_t physBase, bool readOnly, bool wc);
 	uint64_t& accessToDirPtrEntry(uintptr_t virtualBase);
 	uint64_t& accessToPageTableEntry(uintptr_t virtualBase);
 

@@ -28,6 +28,7 @@ typedef UINT64 EFI_VIRTUAL_ADDRESS;
 
 
 #define EFI_SUCCESS               0
+#define EFI_BUFFER_TOO_SMALL      0x8000000000000005ULL
 
 #define EFIAPI
 #define IN

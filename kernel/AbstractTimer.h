@@ -22,6 +22,7 @@
 #pragma once
 #include <atomic>
 #include <common_types.h>
+#include <cpu.h>
 
 class AbstractTimer
 {
@@ -63,11 +64,9 @@ public:
 	{
 		return ((m_ns100Divider > 0) ? (t / m_ns100Divider) : (((t + 9) / m_usDivider) * 10));
 	}
-	TimePoint fastTimepoint() const
-	{
-		return m_lastTimepoint.load(std::memory_order_acquire);
-	}
+	TimePoint fastTimepoint();
 	static AbstractTimer* system();
+	void onInitCpu(unsigned int cpuId);
 	static void setSystemTimer(AbstractTimer* timer);
 	static void onInterrupt();
 
@@ -84,4 +83,12 @@ private:
 	TimePoint m_usDivider = 0;
 	TimePoint m_ns100Divider = 0;
 	std::atomic<TimePoint> m_lastTimepoint{0};
+
+	struct CpuTscState
+	{
+		TimePoint m_tscDivider;
+		std::atomic<TimePoint> m_lastCpuTimestamp{0};
+		std::atomic<TimePoint> m_lastTimerTimestamp{0};
+	} m_cpuTscState[MAX_CPU];
+	bool m_useCpuTsc = true;
 };

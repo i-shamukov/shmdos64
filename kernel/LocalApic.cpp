@@ -48,11 +48,13 @@ enum
 	apicIcrLevelAssert = (1 << 14)
 };
 
+void gccAsmFuncAddrBugWorkaroundApicCpp() { }
 #define APIC_NULL_HANDLER(procName)\
-	asm volatile(".globl " #procName);\
-	asm volatile(#procName ":");\
-	asm volatile("iret");\
-	extern "C" void procName();\
+	asm volatile(	".globl " #procName "\n"\
+					#procName ":\n"\
+					"call cpuFastEio\n"\
+					"iretq\n");\
+	extern "C" void procName();
 	
 APIC_NULL_HANDLER(apicSpuriousInterrupt)
 
@@ -85,7 +87,15 @@ void LocalApic::initCurrentCpu()
 {
 	const uint64_t apicBaseEnable = 0x800;
 	const uint32_t apicSoftwareEnable = 0x100;
-	cpuWriteMSR(CPU_MSR_APIC_BASE, m_mmioBase | apicBaseEnable);
+	
+	const uint64_t curApicBaseValue = cpuReadMSR(CPU_MSR_APIC_BASE);
+	const uintptr_t maxPhys = cpuMaxPhysAddr();
+	const uint64_t curApicMmioBase = cpuAlignAddrLo(curApicBaseValue & maxPhys);
+	if (((curApicBaseValue & apicSoftwareEnable) == 0) || (curApicMmioBase != m_mmioBase))
+	{
+		const uint64_t flags = curApicBaseValue & ~maxPhys;
+		cpuWriteMSR(CPU_MSR_APIC_BASE, m_mmioBase | apicBaseEnable | flags);
+	}
 	m_mmio->out32(SpuriousInterruptVectorReg, CPU_APIC_SPURIOUS_VECTOR | apicSoftwareEnable);
 	const ApicCpuId apicId = m_mmio->in32(ApicIdReg) >> 24;
 	if (apicId >= MAX_CPU)

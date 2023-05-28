@@ -42,39 +42,50 @@ static bool setIrqApicMode()
     param.Count = 1;
     param.Pointer = &arg;
     static char picObject[] = "\\_PIC";
-    return (AcpiEvaluateObject(NULL, picObject, &param, nullptr) == AE_OK);
+    return (AcpiEvaluateObject(nullptr, picObject, &param, nullptr) == AE_OK);
 }
 
-static int getBridgePciBus(ACPI_HANDLE bridge, int parentPciBus)
+static bool getPciDeviceAddr(ACPI_HANDLE device, PciAddress& pciAddr, int parentPciBus)
 {
     ACPI_BUFFER addrBuf;
     ACPI_OBJECT obj;
-    
     addrBuf.Length = sizeof(obj);
     addrBuf.Pointer = &obj;
-    static char bbnObject[] = "_BBN";
-    if (AcpiEvaluateObject(bridge, bbnObject, NULL, &addrBuf) == AE_OK)
-        return static_cast<int>(obj.Integer.Value);
-    else
+    static char adrObject[] = "_ADR";
+    if (AcpiEvaluateObject(device, adrObject, nullptr, &addrBuf) == AE_OK)
     {
-        addrBuf.Length = sizeof(obj);
-        addrBuf.Pointer = &obj;
-        static char adrObject[] = "_ADR";
-        AcpiEvaluateObject(bridge, adrObject, NULL, &addrBuf);
         const uint32_t pciDevAndFunc = obj.Integer.Value;
         if (obj.Type == ACPI_TYPE_INTEGER)
         {
-            PciAddress pciAddr;
             pciAddr.m_bus = parentPciBus;
             pciAddr.m_device = (pciDevAndFunc >> 16) & 0xFFFF;
             pciAddr.m_function = pciDevAndFunc & 0xFFFF;
-            std::unique_ptr<IoResource> pciSpace(makePciSpaceIoResource(pciAddr));
-            if (pciSpace)
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static int getBridgePciBus(ACPI_HANDLE bridge, const PciAddress& pciAddr)
+{
+    ACPI_BUFFER addrBuf;
+    ACPI_OBJECT obj;
+    addrBuf.Length = sizeof(obj);
+    addrBuf.Pointer = &obj;
+    static char bbnObject[] = "_BBN";
+    if (AcpiEvaluateObject(bridge, bbnObject, nullptr, &addrBuf) == AE_OK)
+    {
+        return static_cast<int>(obj.Integer.Value);
+    }
+    else
+    {
+        std::unique_ptr<IoResource> pciSpace(makePciSpaceIoResource(pciAddr));
+        if (pciSpace)
+        {
+            if ((pciSpace->in8(PciConfHeaderType) & 0x7F) == PciHeaderTypePciToPciBridge)
             {
-                if ( (pciSpace->in8(PciConfHeaderType) & 0x7F) == PciHeaderTypePciToPciBridge)
-                {
-                    return pciSpace->in8(PciConfSecondaryBusNumber);
-                }
+                return pciSpace->in8(PciConfSecondaryBusNumber);
             }
         }
     }
@@ -88,41 +99,33 @@ public:
     {
         static char pciBridgeObject[] = "PNP0A03";
         AcpiGetDevices(pciBridgeObject, &PciIrqEnumerator::acpiProcessSystemBridge, this, nullptr);
-        updatePciConf();
     }
 
 private:
     struct CrsContext
     {
-        PciIrqEnumerator* m_obj;
         ACPI_PCI_ROUTING_TABLE* m_routingTable;
         unsigned int m_bus;
     };
-
-    static const int m_numPciIrqPins = 4;
-    struct DeviceRouting
-    {
-        unsigned int m_bus;
-        unsigned int m_device;
-        unsigned int m_pinToIrq[m_numPciIrqPins] = {};
-    };
     
-
 private:
-    void proceccBridge(ACPI_HANDLE bridge, int level, int parentPciBus)
+    void processBridge(ACPI_HANDLE bridge, int level, int parentPciBus)
     {
-        if (level >= 5)
+        if (level >= 10)
         {
             println(L"ACPI: too long PCI bus depth");
             return;
         }
 
-        const int pciBus = getBridgePciBus(bridge, parentPciBus);
-        if (pciBus == -1)
-        {
-            println(L"ACPI: failed to get pci bus");
+        PciAddress pciAddr;
+        if (!getPciDeviceAddr(bridge, pciAddr, parentPciBus))
             return;
-        }
+
+        int pciBus = getBridgePciBus(bridge, pciAddr);
+        if (pciBus == -1)
+            return;
+        
+        registerPciRoutingBus(pciBus, parentPciBus, pciAddr.m_device);
 
         ACPI_BUFFER rtblBuf;   
         rtblBuf.Length = ACPI_ALLOCATE_BUFFER;
@@ -134,22 +137,30 @@ private:
             while (routingTable->Length != 0)
             {
                 if (routingTable->Source[0] == '\0')
-                    savePciIRQ(pciBus, (routingTable->Address >> 16) & 0x1F, routingTable->Pin, routingTable->SourceIndex);
+                {
+                    addPciDeviceRouting(pciBus, (routingTable->Address >> 16), routingTable->Pin + 1, routingTable->SourceIndex);
+                }
                 else
                 {
                     ACPI_HANDLE srcHadle;
-                    if (AcpiGetHandle(bridge, routingTable->Source, &srcHadle) != AE_OK)
-                        continue;
-
-                    CrsContext ctx{this, routingTable, static_cast<unsigned int>(pciBus)};
-                    static char crsObject[] = "_CRS";
-                    AcpiWalkResources(srcHadle, crsObject, &PciIrqEnumerator::processCrs, &ctx);
+                    if (AcpiGetHandle(bridge, routingTable->Source, &srcHadle) == AE_OK)
+                    {
+                        CrsContext ctx{routingTable, static_cast<unsigned int>(pciBus)};
+                        static char crsObject[] = "_CRS";
+                        AcpiWalkResources(srcHadle, crsObject, &PciIrqEnumerator::processCrs, &ctx);
+                    }
                 }
                 tableBytes += routingTable->Length;
                 routingTable = reinterpret_cast<ACPI_PCI_ROUTING_TABLE*>(tableBytes);
             }
         }
 
+        if (rtblBuf.Pointer != nullptr)
+            AcpiOsFree(rtblBuf.Pointer);
+
+        ACPI_HANDLE childBridge = nullptr;
+        while (AcpiGetNextObject(ACPI_TYPE_DEVICE, bridge, childBridge, &childBridge) == AE_OK)
+            processBridge(childBridge, level + 1, pciBus);
     }
 
     static ACPI_STATUS processCrs(ACPI_RESOURCE* resource, void* context)
@@ -159,84 +170,21 @@ private:
         if (resource->Type == ACPI_RESOURCE_TYPE_IRQ) 
         {
             const ACPI_RESOURCE_IRQ* irq = &resource->Data.Irq;
-            crsContext->m_obj->savePciIRQ(crsContext->m_bus, (routingTable->Address >> 16) & 0x1F, routingTable->Pin, irq->Interrupts[routingTable->SourceIndex]);    
+            addPciDeviceRouting(crsContext->m_bus, (routingTable->Address >> 16), routingTable->Pin + 1, irq->Interrupts[routingTable->SourceIndex]);  
         }
         else if (resource->Type == ACPI_RESOURCE_TYPE_EXTENDED_IRQ) 
         {
             const ACPI_RESOURCE_EXTENDED_IRQ* irq = &resource->Data.ExtendedIrq;
-            crsContext->m_obj->savePciIRQ(crsContext->m_bus, (routingTable->Address >> 16) & 0x1F, routingTable->Pin, irq->Interrupts[routingTable->SourceIndex]);    
+            addPciDeviceRouting(crsContext->m_bus, (routingTable->Address >> 16), routingTable->Pin + 1, irq->Interrupts[routingTable->SourceIndex]);    
         }
         return AE_OK;
     }
 
     static ACPI_STATUS acpiProcessSystemBridge(ACPI_HANDLE bridge, UINT32, void* context, void**)
     {
-        static_cast<PciIrqEnumerator*>(context)->proceccBridge(bridge, 0, 0);
+        static_cast<PciIrqEnumerator*>(context)->processBridge(bridge, 0, 0);
         return AE_OK;
     }
-
-    void savePciIRQ(unsigned int bus, unsigned int device, unsigned int pin, unsigned int irq)
-    {
-        const unsigned int maxIrq = 31;
-        if ((irq >= maxIrq) || (pin >= m_numPciIrqPins))
-            return;
-
-        auto it = std::find_if(m_routing.begin(), m_routing.end(), [bus, device](const DeviceRouting& routing){
-            return ((routing.m_bus == bus) && (routing.m_device == device));
-        });
-        if (it == m_routing.end())
-        {
-            DeviceRouting r;
-            r.m_bus = bus;
-            r.m_device = device;
-            r.m_pinToIrq[pin] = irq;
-            m_routing.emplace_back(std::move(r));
-        }
-        else
-        {
-            it->m_pinToIrq[pin] = irq;
-        }
-    }
-
-    void updatePciConf()
-    {
-        print(L"PCI IRQ remapping: ");
-        for (const DeviceRouting& routing : m_routing)
-        {
-            for (unsigned int function = 0; function < 8; function++)
-            {
-                PciAddress pciAddr;
-                pciAddr.m_bus = routing.m_bus;
-                pciAddr.m_device = routing.m_device;
-                pciAddr.m_function = function;
-                std::unique_ptr<IoResource> pciSpace(makePciSpaceIoResource(pciAddr));
-                if (!pciSpace)
-                    break;
-
-                const uint16_t curIrqPin = pciSpace->in16(PciConfIrqPin);
-                if (curIrqPin == 0xFFFF)
-                    continue;
-
-                const unsigned int pin = curIrqPin >> 8;
-                const unsigned int oldIrq = curIrqPin & 0xFF;
-                if (pin == 0)
-                    continue;
-
-                const unsigned int newIrq = routing.m_pinToIrq[pin - 1];
-                if (chechRedirectIrq(oldIrq, newIrq))
-                {
-                    pciSpace->out8(PciConfIrq, newIrq);
-                    print(L'[', routing.m_bus, L' ', routing.m_device, L' ', function, L"]=", newIrq, L' ');
-                }
-                if ((function == 0) && ((pciSpace->in16(PciConfHeaderType) & 0x80) == 0) ) 
-                    break;
-            }
-        }
-        println(L"");
-    }
-
-private:
-    kvector<DeviceRouting> m_routing;
 };
 
 void initPciIrq()
@@ -246,5 +194,6 @@ void initPciIrq()
         println(L"ACPI: failed to setup IOAPIC mode");
         return;
     }
+
     PciIrqEnumerator();
 }

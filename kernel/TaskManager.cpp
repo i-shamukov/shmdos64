@@ -30,8 +30,6 @@
 #include "TaskManager.h"
 #include "LocalApic.h"
 
-#include <conout.h>
-
 #define ROUTINE_INT_TO_STR_HELPER(value) #value
 #define ROUTINE_INT_TO_STR(value) ROUTINE_INT_TO_STR_HELPER(value)
 #define EXTERN_BEGIN_ROUTINE\

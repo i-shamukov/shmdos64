@@ -40,7 +40,7 @@ public:
 	void* alloc(size_t size, uintptr_t flags);
 	bool free(void* pointer);
 	void freeRamPages(void* base, size_t size, bool realloc);
-	void* mapMmio(uintptr_t mmioBase, size_t size, bool cacheDisabled);
+	void* mapMmio(uintptr_t mmioBase, size_t size, MemoryType memoryType);
 	bool unmapMmio(void* pointer);
 	bool setPagesFlags(void* pointer, size_t size, uintptr_t flags);
 	PagingManager64* pagingManager();

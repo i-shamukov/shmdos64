@@ -50,7 +50,7 @@ static inline bool isPhysToVirtualConvertible(uintptr_t addr)
 template<typename T>
 static inline bool isRamMappingPtr(T* ptr)
 {
-    return (reinterpret_cast<uintptr_t>(ptr) >= RAM_VIRTUAL_BASE);
+    return ((reinterpret_cast<uintptr_t>(ptr) >= RAM_VIRTUAL_BASE) && (reinterpret_cast<uintptr_t>(ptr) < KERNEL_VIRTUAL_BASE));
 }
 
 

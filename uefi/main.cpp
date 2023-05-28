@@ -112,8 +112,6 @@ void EfiMain()
 	loadModules(systemConfig, params->m_modules);
 
 	loadAcpi(params);
-	if (systemConfig.m_fixFrameBufferMtrr)
-		fixFrameBufferMtrr();
 	dumpControlRegisters();
 	video.debugInfo();
 
@@ -136,5 +134,5 @@ void EfiMain()
 	cpuSetDefaultControlRegisters();
 	cpuInitFpu();
 	kernel.run(physToVirtual(params));
-	panic(L"Kerenl returned");
+	panic(L"Kernel returned");
 }

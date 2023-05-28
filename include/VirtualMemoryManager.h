@@ -21,6 +21,7 @@
 #pragma once
 #include <common_types.h>
 #include <kernel_export.h>
+#include <MemoryType.h>
 
 enum : uintptr_t
 {
@@ -41,7 +42,7 @@ public:
 	void* alloc(size_t size, uintptr_t flags);
 	bool free(void* pointer);
 	void freeRamPages(void* base, size_t size, bool realloc = true);
-	void* mapMmio(uintptr_t mmioBase, size_t size, bool cacheDisabled = true);
+	void* mapMmio(uintptr_t mmioBase, size_t size, MemoryType memoryType = MemoryType::CacheDisabled);
 	bool unmapMmio(void *pointer);
 	bool setPagesFlags(void* pointer, size_t size, uintptr_t flags);
 	PagingManager64* pagingManager();

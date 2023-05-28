@@ -21,6 +21,7 @@
 
 #include <kvector.h>
 #include <conout.h>
+#include <common_lib.h>
 #include "PciBus.h"
 
 
@@ -115,6 +116,15 @@ void PciBusEnumerator::processDevice(const PciAddress& pciAddr, std::unique_ptr<
     dev.m_info.m_pin = irqPin >> 8;
     if (dev.m_info.m_irq == 0xFF)
         dev.m_info.m_irq = 0;
+    if ((dev.m_info.m_pin != 0xFF) && (dev.m_info.m_pin != 0))
+    {
+        const unsigned int newIrq = getPciDeviceIrq(pciAddr.m_bus, pciAddr.m_device, dev.m_info.m_pin);
+        if (chechRedirectIrq(dev.m_info.m_irq, newIrq))
+        {
+            dev.m_info.m_irq = newIrq;
+            pciConf->out8(PciConfIrq, dev.m_info.m_irq);
+        }
+    }
     for (unsigned int barIdx = 0; barIdx < std::size(dev.m_info.m_bar); ++barIdx)
         dev.m_info.m_bar[barIdx] = pciConf->in32(PciConfBar0 + barIdx * 4);
     dev.m_info.m_pciAddress = pciAddr;

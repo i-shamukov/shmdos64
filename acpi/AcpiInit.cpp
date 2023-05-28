@@ -20,7 +20,8 @@
 
 #include "AcpiInit.h"
 
-#define _AcpiModuleName "AcpiInit"
+ACPI_MODULE_NAME    ("AcpiInit")
+
 
 static void notifyHandler(ACPI_HANDLE, UINT32 value, void*)
 {

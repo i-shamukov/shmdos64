@@ -20,6 +20,7 @@
 
 #pragma once
 #include <limits>
+#include <common_types.h>
 
 class EventObject;
 class kevent

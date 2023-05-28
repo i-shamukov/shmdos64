@@ -53,6 +53,7 @@ set(HEADERS
     ${KERNEL_MODULE_INCLUDE_ROOT}/power.h
     ${KERNEL_MODULE_INCLUDE_ROOT}/KernelModule.h
     ${KERNEL_MODULE_INCLUDE_ROOT}/AbstractDriver.h
+    ${KERNEL_MODULE_INCLUDE_ROOT}/MemoryType.h
 )
 
 set(SOURCES

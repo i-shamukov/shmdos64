@@ -23,19 +23,19 @@
 
 kernel_clock::time_point kernel_clock::now()
 {
-    const AbstractTimer* timer = AbstractTimer::system();
+    AbstractTimer* timer = AbstractTimer::system();
     return time_point(duration(std::chrono::nanoseconds(timer->toNs100(timer->timepoint()) * 100)));
 }
 
 kernel_clock::time_point kernel_clock::fast()
 {
-    const AbstractTimer* timer = AbstractTimer::system();
+    AbstractTimer* timer = AbstractTimer::system();
     return time_point(duration(std::chrono::nanoseconds(timer->toNs100(timer->fastTimepoint()) * 100)));
 }
 
 TimePoint getSystemClockNs100()
 {
-    const AbstractTimer* timer = AbstractTimer::system();
+    AbstractTimer* timer = AbstractTimer::system();
     return timer->toNs100(timer->fastTimepoint());
 }
 

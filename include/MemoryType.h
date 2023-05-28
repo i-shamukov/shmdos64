@@ -1,6 +1,6 @@
 /*
-   config.h
-   Header for EFI BootLoader
+   cpu.h
+   Shared header 
    SHM DOS64
    Copyright (c) 2023, Ilya Shamukov <ilya.shamukov@gmail.com>
    
@@ -21,24 +21,11 @@
 
 #pragma once
 
-#include <kstring.h>
-#include <kvector.h>
-
-class SystemConfig
+enum class MemoryType
 {
-public:
-	bool load();
-
-public:
-	char* m_configData = nullptr;
-	size_t m_configSize = 0;
-	kvector<kwstring> m_bootModules;
-	kwstring m_kernelName = L"kernel.exe";
-	int m_screenWidth = 0;
-	int m_screenHeight = 0;
-	kwstring m_bootLogFileName;
-
-private:
-	void processParam(const kwstring& param, const kvector<kwstring>& values);
-	void parseFile();
+	Default,
+	CacheDisabled,
+	WriteTrought,
+	WriteCombined
 };
+

@@ -28,8 +28,6 @@
 #include "VirtualMemoryManager_p.h"
 #include "panic.h"
 
-#include <conout.h>
-
 enum : uintptr_t
 {
 	VMM_REG_SIZE_SHIFT = 12,
@@ -74,9 +72,9 @@ void VirtualMemoryManager::freeRamPages(void* base, size_t size, bool realloc)
 	return m_private->freeRamPages(base, size, realloc);
 }
 
-void* VirtualMemoryManager::mapMmio(uintptr_t mmioBase, size_t size, bool cacheDisabled)
+void* VirtualMemoryManager::mapMmio(uintptr_t mmioBase, size_t size, MemoryType memoryType)
 {
-	return m_private->mapMmio(mmioBase, size, cacheDisabled);
+	return m_private->mapMmio(mmioBase, size, memoryType);
 }
 
 bool VirtualMemoryManager::unmapMmio(void* pointer)
@@ -360,20 +358,60 @@ bool VirtualMemoryManagerPrivate::free(void* pointer)
 
 void VirtualMemoryManagerPrivate::freeRamPages(void* base, size_t size, bool realloc)
 {
+	if (isRamMappingPtr(base))
+	{
+		RamAllocator& ramAllocator = RamAllocator::getInstance();
+		uintptr_t physAddr = virtualToPhysInt(base);
+		if ((physAddr & PAGE_MASK) != 0)
+		{
+			PANIC(L"Attempt to free unaligned boot memory");
+		}
+
+		const uintptr_t endAddr = physAddr + size;
+		while (physAddr < endAddr)
+		{
+			ramAllocator.freePage(physAddr);
+			physAddr += PAGE_SIZE;
+		}
+		return;
+	}
+
 	if (size <= PAGE_SIZE)
 		m_paging.freeRamPage(reinterpret_cast<uintptr_t>(base), realloc);
 	else
 		m_paging.freeRamPages(reinterpret_cast<uintptr_t>(base), size, realloc);
 }
 
-void* VirtualMemoryManagerPrivate::mapMmio(uintptr_t mmioBase, size_t size, bool cacheDisabled)
+void* VirtualMemoryManagerPrivate::mapMmio(uintptr_t mmioBase, size_t size, MemoryType memoryType)
 {
 	const size_t alignSize = (mmioBase & PAGE_MASK) + size;
 	const uintptr_t vBase = reinterpret_cast<uintptr_t>(alloc(alignSize, VMM_RESERVED));
 	if (vBase == 0)
 		return nullptr;
 
-	const uintptr_t pageFlags = PAGE_FLAG_PRESENT | PAGE_FLAG_WRITE | m_pageDefaultFlag | (cacheDisabled ? uintptr_t(PAGE_FLAG_CACHE_DISABLE) : 0);
+	uintptr_t pageFlags = PAGE_FLAG_PRESENT | PAGE_FLAG_WRITE | m_pageDefaultFlag;
+	switch (memoryType)
+	{
+		case MemoryType::Default:
+			break;
+		
+		case MemoryType::CacheDisabled:
+			pageFlags |= PAGE_FLAG_CACHE_DISABLE;
+			break;
+
+		case MemoryType::WriteTrought:
+			pageFlags |= PAGE_FLAG_WT;
+			break;
+
+		case MemoryType::WriteCombined:
+			pageFlags |= PAGE_FLAG_WC;
+			break;
+
+		default:
+			PANIC(L"Unknown memory type");
+			break;
+	}
+
 	if (alignSize <= PAGE_SIZE)
 		m_paging.mapPage(vBase, mmioBase, pageFlags);
 	else

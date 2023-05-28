@@ -153,39 +153,39 @@ static ACPI_STATUS genericWrite(IoResource* mmio, uint64_t reg, UINT64 value, UI
     return AE_OK; 
 }
 
-#define ACPI_OS_DEBUG_CALL\
-//    print(__func__);
+#define ACPI_OS_DEBUG_CALL(key)\
+//    print(key);
 
 
 extern "C"
 {
     void* AcpiOsAllocate(ACPI_SIZE size)
     {
-        ACPI_OS_DEBUG_CALL
+        //ACPI_OS_DEBUG_CALL('0')
         return (operator new[])(size);
     }
 
     void AcpiOsFree(void* ptr)
     {
-        ACPI_OS_DEBUG_CALL
+        //ACPI_OS_DEBUG_CALL('1')
         return (operator delete[])(ptr);
     }
 
     ACPI_STATUS AcpiOsSignal(UINT32, void*)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('2')
         return AE_OK; 
     }
 
     UINT64 AcpiOsGetTimer()
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('3')
         return getSystemClockNs100();
     }
 
     void ACPI_INTERNAL_VAR_XFACE AcpiOsPrintf(const char *format, ...)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('4')
         va_list args;
         va_start(args, format);
         kvprintf(format, args);
@@ -194,7 +194,7 @@ extern "C"
 
     ACPI_STATUS AcpiOsCreateSemaphore(UINT32 max, UINT32 initial, ACPI_SEMAPHORE* handle)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('5')
         *handle = static_cast<ACPI_SEMAPHORE>(new ksem(initial, max));
         if (*handle == nullptr)
             return AE_ERROR;
@@ -203,7 +203,7 @@ extern "C"
 
     ACPI_STATUS AcpiOsTerminate()
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('6')
         return AE_OK;
     }
 
@@ -223,14 +223,14 @@ extern "C"
 
     ACPI_STATUS AcpiOsDeleteSemaphore(ACPI_SEMAPHORE handle)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('7')
         delete  static_cast<ksem*>(handle);
         return AE_OK; 
     }
 
     ACPI_STATUS AcpiOsPhysicalTableOverride(ACPI_TABLE_HEADER*, ACPI_PHYSICAL_ADDRESS* newAddress, UINT32* newTableLength)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('8')
         *newAddress = 0;
         *newTableLength = 0;
         return AE_OK;
@@ -238,44 +238,44 @@ extern "C"
 
     ACPI_STATUS AcpiOsTableOverride(ACPI_TABLE_HEADER*, ACPI_TABLE_HEADER** newTable)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('9')
         *newTable = nullptr;
         return AE_OK;
     }
 
     void AcpiOsUnmapMemory(void* logicalAddress, ACPI_SIZE)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('A')
         if (!isRamMappingPtr(logicalAddress))
             VirtualMemoryManager::system().unmapMmio(logicalAddress);
     }
 
     void* AcpiOsMapMemory(ACPI_PHYSICAL_ADDRESS physicalAddress, ACPI_SIZE length)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('B')
         if (isPhysToVirtualConvertible(physicalAddress))
             return physToVirtualInt<void>(physicalAddress);
 
-        return VirtualMemoryManager::system().mapMmio(physicalAddress, length, false);
+        return VirtualMemoryManager::system().mapMmio(physicalAddress, length, MemoryType::Default);
     }
 
     ACPI_STATUS AcpiOsPredefinedOverride (const ACPI_PREDEFINED_NAMES*, ACPI_STRING* newValue)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('C')
         *newValue = nullptr;
         return AE_OK;
     }
 
     ACPI_STATUS AcpiOsCreateLock(ACPI_SPINLOCK* outHandle)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('D')
         *outHandle = static_cast<ACPI_SPINLOCK>(new kspin_lock());
         return AE_OK;
     }
 
     void AcpiOsDeleteLock(ACPI_HANDLE handle)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('E')
         delete static_cast<kspin_lock*>(handle);
     }
 
@@ -294,33 +294,33 @@ extern "C"
 
     ACPI_STATUS AcpiOsReadMemory(ACPI_PHYSICAL_ADDRESS address, UINT64* value, UINT32 width)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('F')
         auto [mmio, offset] = getMmio(address, width);
         return genericRead(mmio, offset, value, width);
     }
 
     ACPI_STATUS AcpiOsWriteMemory(ACPI_PHYSICAL_ADDRESS address, UINT64 value, UINT32 width)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('G')
         auto [mmio, offset] = getMmio(address, width);
         return genericWrite(mmio, offset, value, width);
     }
 
     ACPI_STATUS AcpiOsReadPciConfiguration(ACPI_PCI_ID* pciId, UINT32 reg, UINT64* value, UINT32 width)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('H')
         return genericRead(getPciSpace(pciId), reg, value, width);
     }
 
     ACPI_STATUS AcpiOsWritePciConfiguration(ACPI_PCI_ID* pciId, UINT32 reg, UINT64 value, UINT32 width)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('I')
         return genericWrite(getPciSpace(pciId), reg, value, width);
     }
 
     ACPI_STATUS AcpiOsInstallInterruptHandler(UINT32 irq, ACPI_OSD_HANDLER handler, void* context)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('K')
         const uintptr_t key = (reinterpret_cast<uintptr_t>(handler) & CPU_PHYSICAL_ADDRESS_MASK) | (static_cast<uintptr_t>(irq) << 56);
         if (g_acpiDevs.find(key) != g_acpiDevs.end())
             return AE_ERROR;
@@ -361,7 +361,7 @@ extern "C"
 
     ACPI_STATUS AcpiOsRemoveInterruptHandler(UINT32 irq, ACPI_OSD_HANDLER handler)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('L')
         const uintptr_t key = (reinterpret_cast<uintptr_t>(handler) & CPU_PHYSICAL_ADDRESS_MASK) | (static_cast<uintptr_t>(irq) << 56);
         auto it = g_acpiDevs.find(key);
         if (it == g_acpiDevs.end())
@@ -373,13 +373,13 @@ extern "C"
 
     ACPI_STATUS AcpiOsInitialize()
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('M')
         return AE_OK;
     }
 
     void AcpiOsVprintf(const char *format, va_list args)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('N')
         kvprintf(format, args);
     }
 
@@ -389,9 +389,9 @@ extern "C"
         return kthis_thread::get_id();
     }
 
-    ACPI_STATUS AcpiOsReadPort (ACPI_IO_ADDRESS port, UINT32* value, UINT32 width)
+    ACPI_STATUS AcpiOsReadPort(ACPI_IO_ADDRESS port, UINT32* value, UINT32 width)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('P')
         UINT64 value64;
         const ACPI_STATUS result = genericRead(g_IoPortResource.get(), port, &value64, width);
         *value = value64 & 0xFFFFFFFF;
@@ -400,25 +400,25 @@ extern "C"
 
     ACPI_STATUS AcpiOsWritePort(ACPI_IO_ADDRESS port, UINT32 value, UINT32 width)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('R')
         return genericWrite(g_IoPortResource.get(), port, value, width);
     }
 
     void AcpiOsStall(UINT32 microseconds)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('Q')
         sleepUs(microseconds);
     }
 
     void AcpiOsSleep(UINT64 milliseconds)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('V')
         sleepMs(milliseconds);
     }
     
     ACPI_STATUS AcpiOsExecute(ACPI_EXECUTE_TYPE, ACPI_OSD_EXEC_CALLBACK function, void* context)
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('X')
         ThreadPool::system().run([context, function]{
             {
                 klock_guard lock(g_asyncCallMutex);
@@ -436,14 +436,40 @@ extern "C"
 
     void AcpiOsWaitEventsComplete()
     {
-        ACPI_OS_DEBUG_CALL
+        ACPI_OS_DEBUG_CALL('Y')
         kunique_lock lock(g_asyncCallMutex);
         while (g_asyncCallCount > 0)
             g_asyncCallCv.wait(lock);
     }
 
-    ACPI_PHYSICAL_ADDRESS AcpiOsGetRootPointer(void)
+    ACPI_PHYSICAL_ADDRESS AcpiOsGetRootPointer()
     {
         return acpiRsdpPhys();
+    }
+
+    ACPI_STATUS AcpiOsCreateMutex(ACPI_MUTEX* outHandle)
+    {
+        *outHandle = static_cast<kmutex*>(new kmutex());
+        return AE_OK;
+    }
+
+    ACPI_STATUS AcpiOsAcquireMutex(ACPI_MUTEX handle, UINT16 timeout)
+    {
+        return static_cast<kmutex*>(handle)->lock((timeout == 0xFFFF) ? kmutex::WaitInfinite : TimePointFromMilliseconds(timeout)) ? AE_OK : AE_TIME;
+    }
+
+    void AcpiOsReleaseMutex(ACPI_MUTEX handle)
+    {
+        static_cast<kmutex*>(handle)->unlock();
+    }
+
+    void AcpiOsDeleteMutex(ACPI_MUTEX handle)
+    {
+        delete static_cast<kmutex*>(handle);
+    }
+
+    ACPI_STATUS AcpiOsEnterSleep(UINT8, UINT32, UINT32)
+    {
+        return AE_OK;
     }
 }

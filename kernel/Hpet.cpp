@@ -57,7 +57,6 @@ Hpet::Hpet()
 
 	static const uint64_t tmPeriodicCap = (1 << 4);
 
-	static const uint32_t tmIntEnable = (1 << 2);
 	static const uint32_t tmTypePeriodic = (1 << 3);
 	static const uint32_t tmValSetCfg = (1 << 6);
 
@@ -93,7 +92,7 @@ Hpet::Hpet()
 		PANIC(L"HPET isn't support periodic mode or 32 bit");
 
 	m_mmio->out64(MainCounterValueReg, 0);
-	m_mmio->out32(m_timerRegBase + TimerRegConfigurationAndCapability, tmValSetCfg | tmTypePeriodic | tmIntEnable);
+	m_mmio->out32(m_timerRegBase + TimerRegConfigurationAndCapability, tmValSetCfg | tmTypePeriodic);
 	m_mmio->out64(m_timerRegBase + TimerRegComparator, freq / SYSTEM_TIMER_FREQUENCY_DIV);
 	m_mmio->out64(GeneralConfigurationReg, enableCfg | legRtCfg);
 }

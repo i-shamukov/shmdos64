@@ -24,6 +24,7 @@
 #include <conout.h>
 #include <VirtualMemoryManager.h>
 #include <kthread.h>
+#include "AbstractTimer.h"
 #include "paging.h"
 #include "SmpBoot.h"
 #include "AcpiTables.h"
@@ -46,6 +47,7 @@ static void cpuInitProc(unsigned int cpuId, void* localCpuData, void* localCpuSp
 	LocalApic::system().initCurrentCpu();
 	TaskManager::system()->initCurrentCpu(firstThread);
 	cpuLoadMtrr(mtrr);
+	AbstractTimer::system()->onInitCpu(cpuId);
 	cpuEnableInterrupts();
 	TaskManager::terminateCurrentTask();
 }

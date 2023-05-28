@@ -52,7 +52,8 @@ enum : uint64_t
 	PAGE_FLAG_SIZE = (1 << 7),
 	PAGE_FLAG_GLOBAL = (1 << 8),
 	PAGE_FLAG_ALLOCATED = (1 << 9),
-	PAGE_FLAG_MEMZERO = (1 << 10)
+	PAGE_FLAG_MEMZERO = (1 << 10),
+	PAGE_FLAG_WC = PAGE_FLAG_WT | PAGE_FLAG_CACHE_DISABLE,
 };
 
 enum : uint64_t
@@ -81,7 +82,8 @@ enum : uint32_t
 	CPU_MSR_IA32_PAT = 0x277,
 	CPU_MSR_FS_BASE = 0xC0000100,
 	CPU_MSR_GS_BASE = 0xC0000101,
-	CPU_MSR_KERNEL_GS_BASE = 0xC0000102
+	CPU_MSR_KERNEL_GS_BASE = 0xC0000102,
+	CPU_MSR_IA32_IA32_TSC_AUX = 0xC0000103
 };
 
 enum : uint32_t
@@ -94,7 +96,8 @@ enum : uint32_t
 enum : uint32_t
 {
 	CPUID_PROCESSOR_INFO_ECX_CMPXCHG16B = 1 << 13,
-	CPUID_PROCESSOR_INFOEX_EDX_1GBPAGES = 1 << 26
+	CPUID_PROCESSOR_INFOEX_EDX_1GBPAGES = 1 << 26,
+	CPUID_PROCESSOR_INFOEX_EDX_RDTSCP = 1 << 27,
 };
 
 enum : unsigned int
@@ -309,6 +312,14 @@ static inline uint64_t cpuReadTSC()
 	return (static_cast<uint64_t>(hi) << 32) | static_cast<uint64_t>(lo);
 }
 
+static inline uint64_t cpuReadTSCP(unsigned int& pid)
+{
+	uint32_t lo;
+	uint32_t hi;
+	asm volatile("rdtscp" : "=a"(lo), "=d"(hi), "=c"(pid));
+	return (static_cast<uint64_t>(hi) << 32) | static_cast<uint64_t>(lo);
+}
+
 template<typename AddrType>
 static inline AddrType cpuAlignAddrHi(AddrType addr)
 {
@@ -369,12 +380,12 @@ static inline uint32_t inportd(uint16_t port)
 
 static inline void cpuSaveFpuContext(void* context)
 {
-	asm volatile("fxsave [%0] "::"r"(context) : "memory");
+	asm volatile("fxsaveq [%0] "::"r"(context) : "memory");
 }
 
 static inline void cpuRestoreFpuContext(const void *context)
 {
-	asm volatile("fxrstor [%0] "::"r"(context) : "memory");
+	asm volatile("fxrstorq [%0] "::"r"(context) : "memory");
 }
 
 static inline uintptr_t cpuGetLocalData(uintptr_t offset)
@@ -487,6 +498,7 @@ static inline void cpuSetDefaultControlRegisters()
 {
 	cpuSetCR0((cpuGetCR0() & ~(CR0_CACHE_DISABLE | CR0_NOT_WRITE_TROUGHT | CR0_EMULATION)) | CR0_WRITE_PROTECT | CR0_NUMERIC_ERROR);
 	cpuSetCR4(cpuGetCR4() | CR4_PAGE_GLOBAL_ENABLE | CR4_OSFXSR | CR4_OSXMMEXCPT | CR4_OSXSAVE);
+	cpuWriteMSR(CPU_MSR_IA32_PAT, 0x0107040601070406ULL);
 }
 
 class CpuInterruptLock

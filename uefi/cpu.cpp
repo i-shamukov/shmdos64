@@ -46,40 +46,6 @@ void dumpControlRegisters()
 	}
 }
 
-void fixFrameBufferMtrr()
-{
-	const int vcnt = cpuReadMSR(CPU_MSR_IA32_MTRRCAP) & 0xFF;
-	const uintptr_t frameBuffer = UefiVideo::getInstance().frameBuffer();
-	const uint64_t valid = 0x800;
-	const uint64_t writeCombinig = 0x01;
-	for (int idx = 0; idx < vcnt; ++idx)
-	{
-		const uint64_t addr = cpuReadMSR(CPU_MSR_IA32_MTRR_PHYSBASE0 + idx * 2) & ~PAGE_MASK;
-		uint64_t mask = cpuReadMSR(CPU_MSR_IA32_MTRR_PHYSMASK0 + idx * 2);
-		if ((mask & valid) == 0)
-			continue;
-
-		mask &= ~PAGE_MASK;
-		if ((frameBuffer & mask) == addr)
-		{
-			print(L"Setup MTRR for Frame Buffer... ");
-			const uint64_t cr0 = cpuGetCR0();
-			const uint64_t cr4 = cpuGetCR4();
-			cpuSetCR0(cr0 | CR0_CACHE_DISABLE);
-			cpuInvalidateCache();
-
-			cpuWriteMSR(CPU_MSR_IA32_MTRR_PHYSBASE0 + idx * 2, addr | writeCombinig);
-
-			cpuInvalidateCache();
-			cpuSetCR4(cr4 & ~CR4_PAGE_GLOBAL_ENABLE);
-			cpuSetCR0(cr0);
-			cpuSetCR4(cr4);
-			println(L"OK");
-			break;
-		}
-	}
-}
-
 void cpuTestCommands()
 {
 	uint32_t eax = CPUID_PROCESSOR_INFO_EAX;

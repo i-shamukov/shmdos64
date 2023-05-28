@@ -42,25 +42,25 @@ MutexPrivate::~MutexPrivate()
 		PANIC(L"destroying busy mutex");
 }
 
-void MutexPrivate::onWake()
+unsigned int MutexPrivate::onWake()
 {
 	unsigned int lock = m_lockCpu.load(std::memory_order_acquire);
 	for (;;)
 	{
 		const unsigned int newLock = ((lock == g_waitCountStartValue) ? cpuCurrentId() : (lock - 1));
 		if (m_lockCpu.compare_exchange_strong(lock, newLock, std::memory_order_acquire, std::memory_order_relaxed))
-			break;
+			return newLock;
 	}
 }
 
-void MutexPrivate::lock()
+bool MutexPrivate::lock(TimePoint timeout)
 {
 	for (int i = 0; i < m_spinCount; ++i)
 	{
 		unsigned int expected = g_freeSpinValue;
 		const unsigned int cpu = cpuCurrentId();
 		if (m_lockCpu.compare_exchange_strong(expected, cpu, std::memory_order_acquire, std::memory_order_relaxed))
-			return;
+			return true;
 
 		if ((expected >= g_waitCountStartValue) || (expected == cpu))
 			break;
@@ -68,9 +68,15 @@ void MutexPrivate::lock()
 		cpuPause();
 	}
 
-	EventObject::wait();
-	if (threadGetLocalData(LOCAL_THREAD_STORAGE_MUTEX_WAIT) == 1)
-		onWake();
+	if (EventObject::wait(timeout) == 0)
+	{
+		if (threadGetLocalData(LOCAL_THREAD_STORAGE_MUTEX_WAIT) == 1)
+			onWake();
+
+		return true;
+	}
+	
+	return (onWake() < g_waitCountStartValue);
 }
 
 void MutexPrivate::unlock()
@@ -142,9 +148,9 @@ kmutex::~kmutex()
 	m_private->~MutexPrivate();
 }
 
-void kmutex::lock()
+bool kmutex::lock(TimePoint timeout)
 {
-	m_private->lock();
+	return m_private->lock(timeout);
 }
 
 void kmutex::unlock()

@@ -29,11 +29,11 @@ class MutexPrivate : private EventObject
 public:
 	MutexPrivate(int spinCount);
 	~MutexPrivate();
-	void lock();
+	bool lock(const TimePoint timeout);
 	void unlock();
 	bool try_lock();
 	bool addTaskToWaitList(Task* task);
-	void onWake();
+	unsigned int onWake();
 
 private:
 	MutexPrivate(const MutexPrivate&) = delete;

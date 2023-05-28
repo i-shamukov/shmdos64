@@ -21,14 +21,18 @@
 #pragma once
 #include <kernel_export.h>
 #include <klock_guard.h>
+#include <kevent.h>
 
 class MutexPrivate;
 class KERNEL_SHARED kmutex
 {
 public:
+	static const TimePoint WaitInfinite = kevent::WaitInfinite;
+
+public:
 	kmutex(int spinCount = 512);
 	~kmutex();
-	void lock();
+	bool lock(TimePoint timeout = WaitInfinite);
 	void unlock();
 	bool try_lock();
 

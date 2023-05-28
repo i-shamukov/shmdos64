@@ -98,12 +98,6 @@ void SystemConfig::processParam(const kwstring& param, const kvector<kwstring>& 
 		m_bootLogFileName = values.front();
 		return;
 	}
-
-	if (kstricmp(param.c_str(), L"fix_frame_buffer_mtrr") == 0)
-	{
-		m_fixFrameBufferMtrr = (values.front() == L"1");
-		return;
-	}
 }
 
 void SystemConfig::parseFile()
@@ -115,11 +109,15 @@ void SystemConfig::parseFile()
 	kvector<kwstring> paramValues(1);
 
 	const char* ptr = m_configData;
-	const char* end = &m_configData[m_configSize + 1];
-	while (ptr < end)
+	const char* end = &m_configData[m_configSize];
+	for ( ; ; )
 	{
 		if (isRead)
+		{
+			if (ptr >= end)
+				break;
 			c = *ptr++;
+		}
 		else
 			isRead = true;
 

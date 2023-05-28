@@ -50,7 +50,7 @@ IoResource* AbstractDevice::io(uint64_t base, size_t size, IoResourceType type)
 	}
 	else if (type == IoResourceType::MmioSpace)
 	{
-		res = std::make_unique<MmioSpace>(base, size);
+		res = std::make_unique<MmioSpace>(base, size, MemoryType::CacheDisabled);
 	}
 	else
 	{

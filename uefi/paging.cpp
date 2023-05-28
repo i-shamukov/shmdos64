@@ -111,10 +111,10 @@ uint64_t& PagingManager64::accessToPageTableEntry(uintptr_t virtualBase)
 	return m_currentPageDir[(virtualBase >> 12) & 0x1FF];
 }
 
-void PagingManager64::mapPage(uintptr_t virtualBase, uintptr_t physBase, bool readOnly)
+void PagingManager64::mapPage(uintptr_t virtualBase, uintptr_t physBase, bool readOnly, bool wc)
 {
 	accessToPageTableEntry(virtualBase) = (physBase & ~PAGE_MASK) |
-		PAGE_FLAG_PRESENT | (readOnly ? 0 : uintptr_t(PAGE_FLAG_WRITE)) | PAGE_FLAG_GLOBAL;
+		PAGE_FLAG_PRESENT | (readOnly ? 0 : uintptr_t(PAGE_FLAG_WRITE)) | (wc ? uintptr_t(PAGE_FLAG_WC) : 0) | PAGE_FLAG_GLOBAL;
 }
 
 void PagingManager64::protectPages(uintptr_t virtualBase, size_t size)
@@ -128,7 +128,7 @@ void PagingManager64::protectPages(uintptr_t virtualBase, size_t size)
 	}
 }
 
-void* PagingManager64::mapToKernel(const void* physPtr, size_t size, bool readOnly)
+void* PagingManager64::mapToKernel(const void* physPtr, size_t size, bool readOnly, bool wc)
 {
 	size = (size + PAGE_MASK) & ~PAGE_MASK;
 	uintptr_t physAddr = reinterpret_cast<uintptr_t>(physPtr);
@@ -136,7 +136,7 @@ void* PagingManager64::mapToKernel(const void* physPtr, size_t size, bool readOn
 	uintptr_t pageCnt = size / PAGE_SIZE;
 	while (pageCnt-- > 0)
 	{
-		mapPage(virtualAddr, physAddr, readOnly);
+		mapPage(virtualAddr, physAddr, readOnly, wc);
 		virtualAddr += PAGE_SIZE;
 		physAddr += PAGE_SIZE;
 	}

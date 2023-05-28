@@ -517,7 +517,7 @@ void UefiVideo::storeParams(KernelParams::Video& params)
 	params.m_screenHeight = m_screenHeight;
 	params.m_screenPitch = m_screenPitch;
 	auto screenBuf = pgMgr.mapToKernel(reinterpret_cast<void*>(frameBuffer()),
-									   m_screenHeight * m_screenPitch * 4, false);
+									   m_screenHeight * m_screenPitch * 4, false, true);
 	params.m_sreenBuffer = static_cast<uint8_t*>(screenBuf);
 }
 
