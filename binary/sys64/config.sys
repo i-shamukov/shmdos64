@@ -2,4 +2,3 @@ kernel = kernel.exe
 bootload = pci.dll,acpi.dll,pcidev.dll
 screenmode =
 bootlog =
-fix_frame_buffer_mtrr = 1
